@@ -1,0 +1,19 @@
+Package: stoichUtilities
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person("Chad", "Petersen", , "cpetersen4@unl.edu", role = c("aut", "cre"))
+Description: 
+    The STOICH-utilities R package provides user tools for working with STOICH database files. 
+    This package is designed to enable easier and more robust access to the data files from STOICH database releases.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
+Depends: 
+Imports: 
+    tidyr,
+    dplyr,
+    lubridate,
+    readr,
+    stringr
