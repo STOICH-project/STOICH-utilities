@@ -109,7 +109,7 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
       dplyr::filter(!!rlang::sym(varMetadata$variable) > val)
   } else if (condition == "less than"){
-    if (!is.numeric(val) | !is.integer(val) | !lubridate::is.POSIXct(val)){
+    if (!is.numeric(val) & !is.integer(val) & !lubridate::is.POSIXct(val)){
       stop(paste("The value entered is not compatible with the condition \"less than\". \"less than\" only works with values of type: numeric, integer or date.",
                  "\nPlease adjust the filter value/condition combination."))
     }
@@ -126,7 +126,7 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
       dplyr::filter(!(!!rlang::sym(varMetadata$variable) %in% val))
   } else if (condition == "range"){
-    if (!(is.numeric(val) | is.integer(val) | lubridate::is.POSIXct(val))){
+    if (!is.numeric(val) & !is.integer(val) & !lubridate::is.POSIXct(val)){
       stop(paste("The value entered is not compatible with the condition \"range\". \"range\" only works with values of type: numeric, integer or date.",
                  "\nPlease adjust the filter value/condition combination."))
     }
