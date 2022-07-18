@@ -8,6 +8,7 @@ library(lubridate)
 library(readr)
 library(stringr)
 library(sf)
+library(units)
 
 library(stoichUtilities)
 
