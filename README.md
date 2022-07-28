@@ -43,15 +43,19 @@ library(stoichUtilities)
 basePath <- do.call(file.path, as.list(str_split(Sys.getenv("HOME"), "\\\\")[[1]]))
 
 # Load the STOICH data (assumed to be in a directory named "data" inside the home directory)
-stoichData <- loadSTOICH(dataPath=file.path(basePath, "data"))
+stoichData <- stoichUtilities::loadSTOICH(dataPath=file.path(basePath, "data"))
 
 # Filter the STOICH data
-stoichFiltered <- filterSTOICH(dataTables=stoichData, var="State", val="FL", condition="Equal")
+stoichFiltered <- stoichUtilities::filterSTOICH(dataTables=stoichData, var="State", val="FL", condition="Equal")
 
 # Match organism stochiometry data with water chemsitry data for samples that weren't taken at the exact same time
-stoichPaired <- locateDataPairsSTOICH(stoichData, timeDiff=7, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE)
+stoichPaired <- stoichUtilities::locateDataPairsSTOICH(stoichData, timeDiff=2, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE)
 
 # Join all the tables into one large wide table
-stoichTable <- joinSTOICH(stoichPaired)
+stoichTable <- stoichUtilities::joinSTOICH(stoichPaired)
 ```
-
+### Documentation
+You can access documentation for any function using the help command.
+```R
+help(loadSTOICH)
+```
