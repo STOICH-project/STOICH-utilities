@@ -37,9 +37,15 @@ verifySTOICH <- function(dataTables){
     if (!is.data.frame(dataTables[[i]]) | !is_tibble(dataTables[[i]])){
       stop(paste("Expected table in dataTables is not a data.frame or tibble. Please check table: ", i, " i.e. class(dataTable[[", i, "]].", sep=""))
     }
-    if (count(dataTables[[i]]) == 0){
+
+    if (i %in% c("tbl_OrganismStochiometry", "tbl_WaterChemistry")){
+      if (count(dataTables[["tbl_OrganismStochiometry"]]) + count(dataTables[["tbl_WaterChemistry"]]) == 0){
+        stop(paste("Can't join empty tables, no data in tbl_OrganismStochiometry or tbl_WaterChemistry. Please check input tables and possibly adjust filtering.", sep=""))
+      }
+    } else if (count(dataTables[[i]]) == 0) {
       stop(paste("Can't join empty tables, no data in table: ", i, ". Please check input tables and possibly adjust filtering.", sep=""))
     }
+
     if (!("Id" %in% colnames(dataTables[[i]]))){
       stop(paste("Data table primary key not found for table: ", i, ". Please check input tables and adjust column selections.", sep=""))
     }
