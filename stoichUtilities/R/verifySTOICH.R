@@ -27,7 +27,7 @@ verifySTOICH <- function(dataTables){
   }
 
   # Verify all the tables are in the list of tables
-  tblList <- c("tbl_InputFile", "tbl_Site", "tbl_SampleEvent", "tbl_OrganismStochiometry", "tbl_WaterChemistry", "tbl_Source", "tbl_Contact")
+  tblList <- c("tbl_InputFile", "tbl_Site", "tbl_SampleEvent", "tbl_OrganismStoichiometry", "tbl_WaterChemistry", "tbl_Source", "tbl_Contact")
   if (any(!(tblList %in% str_subset(names(dataTables), "tbl_")))){
     stop(paste("One or more expected tables not found in the dataTable list. Please check the list and ensure required tables were loaded and not dropped during filtering/processing."))
   }
@@ -38,9 +38,9 @@ verifySTOICH <- function(dataTables){
       stop(paste("Expected table in dataTables is not a data.frame or tibble. Please check table: ", i, " i.e. class(dataTable[[", i, "]].", sep=""))
     }
 
-    if (i %in% c("tbl_OrganismStochiometry", "tbl_WaterChemistry")){
-      if (count(dataTables[["tbl_OrganismStochiometry"]]) + count(dataTables[["tbl_WaterChemistry"]]) == 0){
-        stop(paste("Can't join empty tables, no data in tbl_OrganismStochiometry or tbl_WaterChemistry. Please check input tables and possibly adjust filtering.", sep=""))
+    if (i %in% c("tbl_OrganismStoichiometry", "tbl_WaterChemistry")){
+      if (count(dataTables[["tbl_OrganismStoichiometry"]]) + count(dataTables[["tbl_WaterChemistry"]]) == 0){
+        stop(paste("Can't join empty tables, no data in tbl_OrganismStoichiometry or tbl_WaterChemistry. Please check input tables and possibly adjust filtering.", sep=""))
       }
     } else if (count(dataTables[[i]]) == 0) {
       stop(paste("Can't join empty tables, no data in table: ", i, ". Please check input tables and possibly adjust filtering.", sep=""))

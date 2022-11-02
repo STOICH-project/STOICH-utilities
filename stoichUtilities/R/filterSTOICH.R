@@ -25,7 +25,7 @@
 #' # filtering by table such as:
 #' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="TrophicMode", val="photoautotroph", condition="equal")
 #' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Latitude", val=c(54.1, 103.1), condition="range")
-#' stoichFiltered <- filterSTOICH(dataTables=stoichData, tableVar="tbl_OrganismStochiometry", var="Type", val="seston", condition="equal")
+#' stoichFiltered <- filterSTOICH(dataTables=stoichData, tableVar="tbl_OrganismStoichiometry", var="Type", val="seston", condition="equal")
 #'
 #' stoichTable <- joinSTOICH(stoichFiltered)
 #'
@@ -107,7 +107,8 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
       val <- min(val)
     }
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
-      dplyr::filter(!!rlang::sym(varMetadata$variable) > val)
+      dplyr::filter(!!rlang::sym(varMetadata$variable) > val) %>%
+      dplyr::filter(!is.na(!!rlang::sym(varMetadata$variable))) # This fixes the case where the value is not defined
   } else if (condition == "less than"){
     if (!is.numeric(val) & !is.integer(val) & !lubridate::is.POSIXct(val)){
       stop(paste("The value entered is not compatible with the condition \"less than\". \"less than\" only works with values of type: numeric, integer or date.",
@@ -118,7 +119,8 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
       val <- max(val)
     }
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
-      dplyr::filter(!!rlang::sym(varMetadata$variable) < val)
+      dplyr::filter(!!rlang::sym(varMetadata$variable) < val) %>%
+      dplyr::filter(!is.na(!!rlang::sym(varMetadata$variable))) # This fixes the case where the value is not defined
   } else if (condition == "equal"){
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
       dplyr::filter(!!rlang::sym(varMetadata$variable) %in% val)
@@ -136,7 +138,8 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
     }
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
       dplyr::filter(!!rlang::sym(varMetadata$variable) < max(val)) %>%
-      dplyr::filter(!!rlang::sym(varMetadata$variable) > min(val))
+      dplyr::filter(!!rlang::sym(varMetadata$variable) > min(val)) %>%
+      dplyr::filter(!is.na(!!rlang::sym(varMetadata$variable))) # This fixes the case where the value is not defined
   }
 
   filteredTables <- filterJoinSTOICH(filteredTables, varMetadata$table)

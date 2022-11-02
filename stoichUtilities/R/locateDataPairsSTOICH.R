@@ -1,7 +1,7 @@
 #' @title Pair STOICH Data with Similar Locations & Dates
 #'
 #' @description
-#'   Looks for matches between organism stochiometry and water chemistry data when the date & time or GPS locations are slightly off.
+#'   Looks for matches between organism stoichiometry and water chemistry data when the date & time or GPS locations are slightly off.
 #'   This could be time intensive so if possible perform any filtering operations before locating data pairs.
 #'
 #' @author Chad Petersen \email{cpetersen4@unl.edu}
@@ -19,7 +19,7 @@
 #'   Probably only useful for averaging water data since the other data points already have matching time and distance data.
 #'
 #' @return The STOICH data tables after pairs have been found. The water chemistry data will be copied to a new entry with a
-#'  SampleEventId matching the organism stochiometry data. The notes will be updated adding a comment about the original
+#'  SampleEventId matching the organism stoichiometry data. The notes will be updated adding a comment about the original
 #'  SampleEventId(s), such as "OriginalSampleEventId=(10, 11, 12)" for an average of 3 water chemistry samples to the Notes
 #'  of tbl_WaterChemistry.
 #'
@@ -71,12 +71,12 @@ locateDataPairsSTOICH <- function(dataTables, timeDiff=7, timeUnits="days", dist
   }
 
   if (ignoreExisting){
-    orgEventIds <- setdiff(unique(dataTables[["tbl_OrganismStochiometry"]]$SampleEventId),
+    orgEventIds <- setdiff(unique(dataTables[["tbl_OrganismStoichiometry"]]$SampleEventId),
                         unique(dataTables[["tbl_WaterChemistry"]]$SampleEventId))
     watEventIds <- setdiff(unique(dataTables[["tbl_WaterChemistry"]]$SampleEventId),
-                           unique(dataTables[["tbl_OrganismStochiometry"]]$SampleEventId))
+                           unique(dataTables[["tbl_OrganismStoichiometry"]]$SampleEventId))
   } else {
-    orgEventIds <- unique(dataTables[["tbl_OrganismStochiometry"]]$SampleEventId)
+    orgEventIds <- unique(dataTables[["tbl_OrganismStoichiometry"]]$SampleEventId)
     watEventIds <- unique(dataTables[["tbl_WaterChemistry"]]$SampleEventId)
   }
 

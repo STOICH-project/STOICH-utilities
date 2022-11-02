@@ -33,12 +33,12 @@ Probably only useful for averaging water data since the other data points alread
 }
 \value{
 The STOICH data tables after pairs have been found. The water chemistry data will be copied to a new entry with a
-SampleEventId matching the organism stochiometry data. The notes will be updated adding a comment about the original
+SampleEventId matching the organism stoichiometry data. The notes will be updated adding a comment about the original
 SampleEventId(s), such as "OriginalSampleEventId=(10, 11, 12)" for an average of 3 water chemistry samples to the Notes
 of tbl_WaterChemistry.
 }
 \description{
-Looks for matches between organism stochiometry and water chemistry data when the date & time or GPS locations are slightly off.
+Looks for matches between organism stoichiometry and water chemistry data when the date & time or GPS locations are slightly off.
 This could be time intensive so if possible perform any filtering operations before locating data pairs.
 }
 \examples{

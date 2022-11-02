@@ -48,7 +48,7 @@ stoichData <- stoichUtilities::loadSTOICH(dataPath=file.path(basePath, "data"))
 # Filter the STOICH data
 stoichFiltered <- stoichUtilities::filterSTOICH(dataTables=stoichData, var="State", val="FL", condition="Equal")
 
-# Match organism stochiometry data with water chemsitry data for samples that weren't taken at the exact same time
+# Match organism stoichiometry data with water chemsitry data for samples that weren't taken at the exact same time
 stoichPaired <- stoichUtilities::locateDataPairsSTOICH(stoichData, timeDiff=2, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE)
 
 # Join all the tables into one large wide table

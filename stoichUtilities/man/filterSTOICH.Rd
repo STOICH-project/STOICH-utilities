@@ -35,7 +35,7 @@ stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
 # filtering by table such as:
 stoichFiltered <- filterSTOICH(dataTables=stoichData, var="TrophicMode", val="photoautotroph", condition="equal")
 stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Latitude", val=c(54.1, 103.1), condition="range")
-stoichFiltered <- filterSTOICH(dataTables=stoichData, tableVar="tbl_OrganismStochiometry", var="Type", val="seston", condition="equal")
+stoichFiltered <- filterSTOICH(dataTables=stoichData, tableVar="tbl_OrganismStoichiometry", var="Type", val="seston", condition="equal")
 
 stoichTable <- joinSTOICH(stoichFiltered)
 

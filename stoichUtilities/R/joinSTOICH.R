@@ -41,8 +41,8 @@ joinSTOICH <- function(dataTables){
     dplyr::rename(Id.InputFile = InputFileId.SampleEvent) %>%
     dplyr::full_join(dplyr::rename_with(dataTables[["tbl_WaterChemistry"]], ~str_c(., ".WaterChemistry"), everything()),
                       by=c("Id.SampleEvent"="SampleEventId.WaterChemistry")) %>%
-    dplyr::full_join(dplyr::rename_with(dataTables[["tbl_OrganismStochiometry"]], ~str_c(., ".OrganismStochiometry"), everything()),
-                      by=c("Id.SampleEvent"="SampleEventId.OrganismStochiometry"))
+    dplyr::full_join(dplyr::rename_with(dataTables[["tbl_OrganismStoichiometry"]], ~str_c(., ".OrganismStoichiometry"), everything()),
+                      by=c("Id.SampleEvent"="SampleEventId.OrganismStoichiometry"))
 
   return(joinedData)
 }

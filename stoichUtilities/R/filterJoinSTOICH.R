@@ -32,7 +32,7 @@ filterJoinSTOICH <- function(dataTables, filtTable){
     dplyr::filter(SourceId %in% unique(dataTables[["tbl_Source"]]$Id)) %>%
     dplyr::filter(SiteId %in% unique(dataTables[["tbl_Site"]]$Id)) %>%
     dplyr::filter(Id %in% unique(c(unique(dataTables[["tbl_WaterChemistry"]]$SampleEventId),
-                                   unique(dataTables[["tbl_OrganismStochiometry"]]$SampleEventId))))
+                                   unique(dataTables[["tbl_OrganismStoichiometry"]]$SampleEventId))))
 
   dataTables[["tbl_Contact"]] <- dataTables[["tbl_Contact"]] %>%
     dplyr::filter(Id %in% unique(dataTables[["tbl_Source"]]$ContactId))
@@ -46,7 +46,7 @@ filterJoinSTOICH <- function(dataTables, filtTable){
   dataTables[["tbl_WaterChemistry"]] <- dataTables[["tbl_WaterChemistry"]] %>%
     dplyr::filter(SampleEventId %in% unique(dataTables[["tbl_SampleEvent"]]$Id))
 
-  dataTables[["tbl_OrganismStochiometry"]] <- dataTables[["tbl_OrganismStochiometry"]] %>%
+  dataTables[["tbl_OrganismStoichiometry"]] <- dataTables[["tbl_OrganismStoichiometry"]] %>%
     dplyr::filter(SampleEventId %in% unique(dataTables[["tbl_SampleEvent"]]$Id))
 
   # If the contact table wasn't the table being filtered filter it last.
