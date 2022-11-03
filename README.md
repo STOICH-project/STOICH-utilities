@@ -9,9 +9,9 @@ There are 2 options for installing the stoichUtilities package. Installing a pre
 ### Option 1: Install a PreBuilt Package
 Download the stoichUtilities_x.x.x.xxxx.tar.gz file.
 
-Click on the Tools menu -> Install Packages.
+Select the menu option **Tools** -> **Install Packages**
 
-A window should pop up. For "Install from:" choose "Package Archive File" and navigate to the location of the tar.gz file.
+A window should pop up. For **Install from:** choose **Package Archive File** and navigate to the location of the tar.gz file.
 
 Click "Install"
 ### Option 2: Install from Source
@@ -29,7 +29,7 @@ Install the library and restart the R session: *ctrl* + *shift* + *B* or with th
 #### Build Package Method: Build and Install Package from Source
 Navigate to the source code location and open stoichUtilities\stoichUtilities.Rproj in RStudio.
 
-Click on the Build menu -> Build Source Package.
+Select the menu option **Build** -> **Build Source Package**
 
 To install the package, follow instructions for Installing a PreBuilt Package.
 
