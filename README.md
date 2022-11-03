@@ -7,7 +7,7 @@ The STOICH API "stoichUtilities" is an R library, as such you will need to have 
 ## Installation
 There are 2 options for installing the stoichUtilities package. Installing a prebuilt package contains the vignette, while a standard "Install and Restart" won't contain the vignette. Instructions for building your own package from source to get the vignette are also included.
 ### Option 1: Install a PreBuilt Package
-Download the stoichUtilities_x.x.x.xxxx.tar.gz file.
+Download the *stoichUtilities_x.x.x.xxxx.tar.gz* file.
 
 Select the menu option **Tools** -> **Install Packages**
 
