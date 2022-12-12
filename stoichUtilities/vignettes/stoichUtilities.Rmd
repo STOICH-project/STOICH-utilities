@@ -136,6 +136,39 @@ stoichPaired <- stoichUtilities::locateDataPairsSTOICH(stoichData, timeDiff=2, t
 
 # Join all the tables into one large wide table
 stoichTable <- stoichUtilities::joinSTOICH(stoichPaired)
+
+```
+
+### Example of Mapping STOICH Data
+Use the stoichTable from the previous section as the data table for mapping.
+```{r mapping STOICH data, eval=FALSE}
+# Install the Leaflet package if it isn't installed.
+install.packages("leaflet")
+
+# Load the leaflet library.
+library(leaflet)
+
+# Split out the GPS data.
+gpsGroups <- stoichTable %>% 
+  select(c("Latitude", "Longitude")) %>% 
+  drop_na(Latitude, Longitude) %>% 
+  # Round the GPS coordinates so small differences in location are lumped together.
+  mutate(across(everything(), round, 2)) %>% 
+  group_by(Latitude, Longitude) %>% 
+  # Summarise to get the number of entries for each location in the database.
+  summarise(nSamples=n(), .groups="keep") %>%
+  # Add some scaling for the radius of the circle based on number of samples
+  mutate(radius = 10*nSamples+500, .keep="all") %>%
+  # Convert the numbers to characters for use in popups
+  mutate(nSamples = as.character(nSamples), .keep="all")
+
+# Start building the map.
+leaflet() %>% 
+  # Select the background style.
+  addProviderTiles(providers$OpenTopoMap) %>%
+  # Add some circles with radius based on scaled number of samples then enable popups to show the number of samples when you click on a circle.
+  addCircles(data = data.frame(gpsGroups), radius = ~radius, color="blue", popup=~nSamples)
+
 ```
 ### Help Documentation
 You can also access documentation for any function using the help command.
