@@ -26,6 +26,7 @@
 #' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="TrophicMode", val="photoautotroph", condition="equal")
 #' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Latitude", val=c(54.1, 103.1), condition="range")
 #' stoichFiltered <- filterSTOICH(dataTables=stoichData, tableVar="tbl_OrganismStoichiometry", var="Type", val="seston", condition="equal")
+#' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Name", val=c("Suggs", "Barco"), condition="contains")
 #'
 #' stoichTable <- joinSTOICH(stoichFiltered)
 #'
@@ -90,7 +91,7 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
 
   # Verify the values provided are compatible with the selected filtering type.
   #  condition %in% greater than, less than, equal, not equal, range
-  progConds <- c("greater than", "less than", "equal", "not equal", "range")
+  progConds <- c("greater than", "less than", "equal", "not equal", "range", "contains")
   condition <- tolower(condition)
   if (!(condition %in% progConds)){
     stop(paste("Condition entered: ", condition, " was not in the list of programmed filtering conditions.\n\n",
@@ -122,9 +123,17 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
       dplyr::filter(!!rlang::sym(varMetadata$variable) < val) %>%
       dplyr::filter(!is.na(!!rlang::sym(varMetadata$variable))) # This fixes the case where the value is not defined
   } else if (condition == "equal"){
+    val <- discard(val, is.na)
+    if (length(val) == 0){
+      stop("NA or no value entered! Please enter a valid term for comparison.")
+    }
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
       dplyr::filter(!!rlang::sym(varMetadata$variable) %in% val)
   } else if (condition == "not equal"){
+    val <- discard(val, is.na)
+    if (length(val) == 0){
+      stop("NA or no value entered! Please enter a valid term for comparison.")
+    }
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
       dplyr::filter(!(!!rlang::sym(varMetadata$variable) %in% val))
   } else if (condition == "range"){
@@ -140,6 +149,20 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
       dplyr::filter(!!rlang::sym(varMetadata$variable) < max(val)) %>%
       dplyr::filter(!!rlang::sym(varMetadata$variable) > min(val)) %>%
       dplyr::filter(!is.na(!!rlang::sym(varMetadata$variable))) # This fixes the case where the value is not defined
+  }  else if (condition == "contains"){
+    if (!is.character(val)){
+      stop(paste("The value entered is not compatible with the condition \"contains\". \"contains\" only works with values of type character.",
+                 "\nPlease adjust the filter value/condition combination."))
+    }
+
+    val <- discard(val, function(x) {str_length(x) > 0 | is.na(x)})
+
+    if (length(val) == 0){
+      stop("The value is empty. Please add search term(s) as strings.")
+    }
+
+    filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
+      dplyr::filter(str_detect(!!rlang::sym(varMetadata$variable), paste("(", str_flatten(val, collapse="|"), ")", sep="")))
   }
 
   filteredTables <- filterJoinSTOICH(filteredTables, varMetadata$table)
