@@ -155,7 +155,7 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
                  "\nPlease adjust the filter value/condition combination."))
     }
 
-    val <- discard(val, function(x) {str_length(x) > 0 | is.na(x)})
+    val <- discard(val, function(x) {str_length(x) < 0 | is.na(x)})
 
     if (length(val) == 0){
       stop("The value is empty. Please add search term(s) as strings.")
