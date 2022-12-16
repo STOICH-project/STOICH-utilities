@@ -173,17 +173,15 @@ gpsGroups <- stoichTable %>%
   group_by(Latitude, Longitude) %>% 
   # Summarise to get the number of entries for each location in the database.
   summarise(nSamples=n(), .groups="keep") %>%
-  # Add some scaling for the radius of the circle based on number of samples
-  mutate(radius = 10*nSamples+500, .keep="all") %>%
   # Convert the numbers to characters for use in popups
-  mutate(nSamples = as.character(nSamples), .keep="all")
+  mutate(nSamples = paste("Samples: ", nSamples, sep=""), .keep="all")
 
 # Start building the map.
 leaflet() %>% 
   # Select the background style.
   addProviderTiles(providers$OpenTopoMap) %>%
-  # Add some circles with radius based on scaled number of samples then enable popups to show the number of samples when you click on a circle.
-  addCircles(data = data.frame(gpsGroups), radius = ~radius, color="blue", popup=~nSamples)
+  # Add markers for all the sites and group them based on zoom level.
+  addMarkers(data = gpsGroups, lng = ~Longitude, lat = ~Latitude, label=~nSamples, clusterOptions = markerClusterOptions())
 
 ```
 ### Help Documentation
