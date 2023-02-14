@@ -57,7 +57,7 @@ library(stoichUtilities)
 ### Working with STOICH Data
 ```R
 # Create a variable to store the user's home directory
-basePath <- do.call(file.path, as.list(str_split(Sys.getenv("HOME"), "\\\\")[[1]]))
+basePath <- path.expand("~")
 
 # Load the STOICH data (assumed to be in a directory named "data" inside the home directory)
 stoichData <- stoichUtilities::loadSTOICH(dataPath=file.path(basePath, "data"))
