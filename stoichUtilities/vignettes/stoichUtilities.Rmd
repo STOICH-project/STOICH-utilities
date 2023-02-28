@@ -138,11 +138,8 @@ library(stoichUtilities)
 
 ### Working with STOICH Data
 ```{r using-utilities, eval=FALSE}
-# Create a variable to store the user's home directory
-basePath <- do.call(file.path, as.list(str_split(Sys.getenv("HOME"), "\\\\")[[1]]))
-
 # Load the STOICH data (assumed to be in a directory named "data" inside the home directory)
-stoichData <- stoichUtilities::loadSTOICH(dataPath=file.path(basePath, "data"))
+stoichData <- stoichUtilities::loadSTOICH(dataPath=file.path(path.expand("~"), "data"))
 
 # Filter the STOICH data
 stoichFiltered <- stoichUtilities::filterSTOICH(dataTables=stoichData, var="State", val="FL", condition="Equal")
