@@ -55,7 +55,7 @@ library(sf)
 library(units)
 library(stoichUtilities)
 
-basePath <- do.call(file.path, as.list(str_split(Sys.getenv("HOME"), "\\\\")[[1]]))
+basePath <- path.expand("~")
 stoichData <- stoichUtilities::loadSTOICH(dataPath=file.path(basePath, "data"))
 stoichCols <- names(stoichData)
 stoichTbl <- tibble(index = 1:100)
