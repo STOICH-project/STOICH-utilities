@@ -56,7 +56,8 @@ library(units)
 library(stoichUtilities)
 
 basePath <- path.expand("~")
-stoichData <- stoichUtilities::loadSTOICH(dataPath=file.path(basePath, "data"))
+stoichData <- file.path(path.expand("~"), "data", "stoichdb", "currentDB")
+stoichData <- stoichUtilities::loadSTOICH(dataPath=file.path(stoichData, max(list.files(stoichData))))
 stoichCols <- names(stoichData)
 stoichTbl <- tibble(index = 1:100)
 for (i in stoichCols){
@@ -70,7 +71,8 @@ stoichTbl <- stoichTbl %>%
   distinct()
 
 stoichTbl <- stoichTbl %>% 
-  slice_head(n=nrow(stoichTbl)-1)
+  slice_head(n=nrow(stoichTbl)-1) %>% 
+  mutate(across(everything(), ~if_else(is.na(.x), "", .x)))
 
 stoichSample <- stoichUtilities::joinSTOICH(stoichData) %>%
   slice_sample(n=5)
@@ -189,7 +191,7 @@ help(loadSTOICH)
 
 # Guide to the STOICH Data
 ## Data Structure
-![Data structure and relationship for STOICH data tables.](./data_model.svg){#id .class width=70% height=70%}
+![Data structure and relationship for STOICH data tables.](C:/Users/cpetersen4/Documents/GitHub/STOICHDatabase/docs/data_model_narrow.svg){#id .class width=70% height=70%}
 
 ## Table Structure View
 

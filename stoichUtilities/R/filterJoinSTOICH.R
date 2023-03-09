@@ -7,6 +7,7 @@
 #' @author Chad Petersen \email{cpetersen4@unl.edu}
 #'
 #' @param dataTables The STOICH data tables filtered using filterSTOICH.
+#' @param filtTable The table name filtering was performed on.
 #'
 #' @return Tables with corresponding entries that were removed from one table removed from the other tables.
 #'
