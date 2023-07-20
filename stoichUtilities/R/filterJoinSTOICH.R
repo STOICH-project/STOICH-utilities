@@ -28,12 +28,22 @@ filterJoinSTOICH <- function(dataTables, filtTable){
       dplyr::filter(ContactId %in% unique(dataTables[["tbl_Contact"]]$Id))
   }
 
+  # If the OrganismStoichiometry or WaterChemistry tables were filtered then filter the other to ensure the final join
+  # doesn't pull a bunch of empty rows into the filtered table.
+  if (filtTable == "tbl_OrganismStoichiometry"){
+    sampleEventIds <- unique(dataTables[["tbl_OrganismStoichiometry"]]$SampleEventId)
+  } else if (filtTable == "tbl_WaterChemistry") {
+    sampleEventIds <- unique(dataTables[["tbl_WaterChemistry"]]$SampleEventId)
+  } else {
+    sampleEventIds <- unique(c(unique(dataTables[["tbl_WaterChemistry"]]$SampleEventId),
+                               unique(dataTables[["tbl_OrganismStoichiometry"]]$SampleEventId)))
+  }
+
   dataTables[["tbl_SampleEvent"]] <- dataTables[["tbl_SampleEvent"]] %>%
     dplyr::filter(InputFileId %in% unique(dataTables[["tbl_InputFile"]]$Id)) %>%
     dplyr::filter(SourceId %in% unique(dataTables[["tbl_Source"]]$Id)) %>%
     dplyr::filter(SiteId %in% unique(dataTables[["tbl_Site"]]$Id)) %>%
-    dplyr::filter(Id %in% unique(c(unique(dataTables[["tbl_WaterChemistry"]]$SampleEventId),
-                                   unique(dataTables[["tbl_OrganismStoichiometry"]]$SampleEventId))))
+    dplyr::filter(Id %in% sampleEventIds)
 
   dataTables[["tbl_Contact"]] <- dataTables[["tbl_Contact"]] %>%
     dplyr::filter(Id %in% unique(dataTables[["tbl_Source"]]$ContactId))

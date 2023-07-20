@@ -8,6 +8,8 @@ filterJoinSTOICH(dataTables, filtTable)
 }
 \arguments{
 \item{dataTables}{The STOICH data tables filtered using filterSTOICH.}
+
+\item{filtTable}{The table name filtering was performed on.}
 }
 \value{
 Tables with corresponding entries that were removed from one table removed from the other tables.

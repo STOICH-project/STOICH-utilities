@@ -37,6 +37,8 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
   # Verify the tables are in the proper format for filtering
   verifySTOICH(dataTables)
 
+  condition <- tolower(condition)
+
   if (!is.character(var)){
     stop(paste("The variable entered:", var, "has class:", class(var), " and should be character. Please enter a valid variable name."))
   }
@@ -74,7 +76,9 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
   }
 
   # Verify the data type of the entered value: "val" is consistent with the data type for the selected variable.
-  if (varMetadata$dataType == "numeric" & !is.numeric(val)){
+  if (some(val, is.na) & length(val) == 1 & condition %in% c("equal", "not equal")){
+    # This case is to avoid flagging valid filtering of NA values
+  } else if (varMetadata$dataType == "numeric" & !is.numeric(val)){
     stop(paste("Variable type is numeric, but:", class(val), "was provided. Please provide a valid value for \"val\"."))
   } else if (varMetadata$dataType == "integer" & !is.integer(val)){
     stop(paste("Variable type is integer, but:", class(val), "was provided. Please provide a valid value for \"val\"."))
@@ -92,7 +96,6 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
   # Verify the values provided are compatible with the selected filtering type.
   #  condition %in% greater than, less than, equal, not equal, range
   progConds <- c("greater than", "less than", "equal", "not equal", "range", "contains")
-  condition <- tolower(condition)
   if (!(condition %in% progConds)){
     stop(paste("Condition entered: ", condition, " was not in the list of programmed filtering conditions.\n\n",
                "Please select from the following list:\n",
@@ -109,7 +112,7 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
     }
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
       dplyr::filter(!!rlang::sym(varMetadata$variable) > val) %>%
-      dplyr::filter(!is.na(!!rlang::sym(varMetadata$variable))) # This fixes the case where the value is not defined
+      tidyr::drop_na(!!rlang::sym(varMetadata$variable)) # This fixes the case where the value is not defined
   } else if (condition == "less than"){
     if (!is.numeric(val) & !is.integer(val) & !lubridate::is.POSIXct(val)){
       stop(paste("The value entered is not compatible with the condition \"less than\". \"less than\" only works with values of type: numeric, integer or date.",
@@ -121,21 +124,33 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
     }
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
       dplyr::filter(!!rlang::sym(varMetadata$variable) < val) %>%
-      dplyr::filter(!is.na(!!rlang::sym(varMetadata$variable))) # This fixes the case where the value is not defined
+      tidyr::drop_na(!!rlang::sym(varMetadata$variable)) # This fixes the case where the value is not defined
   } else if (condition == "equal"){
-    val <- discard(val, is.na)
+    #val <- discard(val, is.na)
     if (length(val) == 0){
-      stop("NA or no value entered! Please enter a valid term for comparison.")
+      stop("No value entered! Please enter a valid term for comparison.")
     }
-    filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
-      dplyr::filter(!!rlang::sym(varMetadata$variable) %in% val)
+    if (none(val, is.na)){
+      filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
+        tidyr::drop_na(!!rlang::sym(varMetadata$variable)) %>%
+        dplyr::filter(!!rlang::sym(varMetadata$variable) %in% val)
+    } else {
+      filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
+        dplyr::filter(!!rlang::sym(varMetadata$variable) %in% val)
+    }
   } else if (condition == "not equal"){
-    val <- discard(val, is.na)
+    #val <- discard(val, is.na)
     if (length(val) == 0){
-      stop("NA or no value entered! Please enter a valid term for comparison.")
+      stop("No value entered! Please enter a valid term for comparison.")
     }
-    filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
-      dplyr::filter(!(!!rlang::sym(varMetadata$variable) %in% val))
+    if (some(val, is.na)){
+      filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
+        tidyr::drop_na(!!rlang::sym(varMetadata$variable)) %>%
+        dplyr::filter(!(!!rlang::sym(varMetadata$variable) %in% val))
+    } else {
+      filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
+        dplyr::filter(!(!!rlang::sym(varMetadata$variable) %in% val))
+    }
   } else if (condition == "range"){
     if (!is.numeric(val) & !is.integer(val) & !lubridate::is.POSIXct(val)){
       stop(paste("The value entered is not compatible with the condition \"range\". \"range\" only works with values of type: numeric, integer or date.",
@@ -148,7 +163,7 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
     filteredTables[[varMetadata$table]] <- filteredTables[[varMetadata$table]] %>%
       dplyr::filter(!!rlang::sym(varMetadata$variable) < max(val)) %>%
       dplyr::filter(!!rlang::sym(varMetadata$variable) > min(val)) %>%
-      dplyr::filter(!is.na(!!rlang::sym(varMetadata$variable))) # This fixes the case where the value is not defined
+      tidyr::drop_na(!!rlang::sym(varMetadata$variable)) # This fixes the case where the value is not defined
   }  else if (condition == "contains"){
     if (!is.character(val)){
       stop(paste("The value entered is not compatible with the condition \"contains\". \"contains\" only works with values of type character.",
