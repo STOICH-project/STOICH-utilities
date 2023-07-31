@@ -38,6 +38,7 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
   verifySTOICH(dataTables)
 
   condition <- tolower(condition)
+  if (var == "SampleDate"){val <- convertToDate(val)}
 
   if (!is.character(var)){
     stop(paste("The variable entered:", var, "has class:", class(var), " and should be character. Please enter a valid variable name."))
@@ -101,6 +102,8 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
                "Please select from the following list:\n",
                str_c(progConds, collapse=",  "), sep=""))
 
+  } else if (varMetadata$variable == "SampleDate"){
+    filteredTables <- sampleDateSTOICH(filteredTables, mode="filter", val, condition)
   } else if (condition == "greater than"){
     if (!is.numeric(val) & !is.integer(val) & !lubridate::is.POSIXct(val)){
       stop(paste("The value entered is not compatible with the condition \"greater than\". \"greater than\" only works with values of type: numeric, integer or date.",

@@ -1,6 +1,6 @@
 Package: stoichUtilities
 Title: Provides user oriented tools to access STOICH Project data.
-Version: 0.0.0.9000
+Version: 0.0.0.9002
 Authors@R: 
     person("Chad", "Petersen", , "cpetersen4@unl.edu", role = c("aut", "cre"))
 Description: 

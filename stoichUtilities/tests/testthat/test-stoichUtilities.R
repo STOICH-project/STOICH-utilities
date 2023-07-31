@@ -20,14 +20,14 @@ stoichData <- loadSTOICH(dataPath=file.path(basePath, "data"))
 stoichFiltered <- filterSTOICH(dataTables=stoichData, var="TrophicMode", val="photoautotroph", condition="Equal")
 stoichFiltered <- filterSTOICH(dataTables=stoichData, tableVar="tbl_OrganismStoichiometry", var="Type", val="seston", condition="Equal")
 stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Latitude", val=c(54.1, 103.1), condition="Range")
-stoichFiltered <- filterSTOICH(dataTables=stoichData, var="State", val="FL", condition="Equal")
+stoichFiltered <- filterSTOICH(dataTables=stoichData, var="State", val="Florida", condition="Equal")
 
 stoichTable <- joinSTOICH(stoichFiltered)
 
 rm(stoichFiltered)
 
 # For testing the locateDataPairsSTOICH function
-#stoichFiltered <- filterSTOICH(dataTables=stoichData, var="State", val=c("FL", "WY"), condition="Equal")
+#stoichFiltered <- filterSTOICH(dataTables=stoichData, var="State", val=c("Florida", "Wyoming"), condition="Equal")
 
 stoichPaired <- locateDataPairsSTOICH(stoichData, timeDiff=7, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE)
 

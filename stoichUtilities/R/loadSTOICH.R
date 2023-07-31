@@ -31,7 +31,11 @@ loadSTOICH <- function(dataPath=file.path(path.expand("~"), "data")){
 
   dataTables <- list()
   # Read the metadata file
-  dataTables[["metadata"]] <- readr::read_csv(file.path(dataPath, metaFile), col_types = list(variable="c", table="c", description="c", values="c", dataType="c"))
+  dataTables[["metadata"]] <- readr::read_csv(file.path(dataPath, metaFile), col_types = list(variable="c", table="c", description="c", values="c", dataType="c")) |>
+    dplyr::bind_rows(tibble(variable = c("SampleDate"),
+                            table = c("tbl_SampleEvent"),
+                            description = c("Date the sample was collected"),
+                            dataType = c("date")))
 
   tables <- (dataTables[["metadata"]] %>%
                dplyr::select(table) %>%
@@ -49,12 +53,16 @@ loadSTOICH <- function(dataPath=file.path(path.expand("~"), "data")){
     if (!file.exists(file.path(dataPath, paste("tbl_", i, ".csv", sep="")))){
       stop(paste("Expected file: ", paste("tbl_", i, ".csv", sep=""), ", not found in the data directory: ", dataPath, sep=""))
     }
-    varType <- (dataTables[["metadata"]] %>%
-                    dplyr::filter(table == paste("tbl_", i, sep="")) %>%
-                    dplyr::select(c("variable", "dataType")))
+    varType <- (dataTables[["metadata"]] |>
+                  dplyr::filter(table == paste("tbl_", i, sep="")) |>
+                  dplyr::select(c("variable", "dataType")) |>
+                  # Since SampleDate doesn't exist yet remove it from the load variables
+                  dplyr::filter(variable != "SampleDate"))
+
     varTypeList <- setNames(as.list(varType$dataType), varType$variable)
     dataTables[[paste("tbl_", i, sep="")]] <- readr::read_csv(file.path(dataPath, paste("tbl_", i, ".csv", sep="")), col_types = varTypeList)
   }
 
-  return(dataTables)
+  # Create a SampleDate from the SampleYear, SampleMonth and SampleDay columns then return the table.
+  return(sampleDateSTOICH(dataTables, mode="create"))
 }

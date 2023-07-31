@@ -63,11 +63,11 @@ locateDataPairsSTOICH <- function(dataTables, timeDiff=7, timeUnits="days", dist
   }
 
   if (!is.character(pairMethod)){
-    stop("pairMethod must be a string. Please choose from on of the following options: Min Time, Min Dist, #days=#km, Avg Water.")
+    stop("pairMethod must be a string. Please choose from one of the following options: Min Time, Min Dist, #days=#km, Avg Water.")
   }
   # Check if the pairMethod is valid
   if (!(tolower(str_replace_all(pairMethod, "[0-9\\.]+", "#")) %in% c("min time", "min dist", "#days=#km", "avg water"))){
-    stop("An undefined pairMethod was entered. Please choose from on of the following options: Min Time, Min Dist, #days=#km, Avg Water.")
+    stop("An undefined pairMethod was entered. Please choose from one of the following options: Min Time, Min Dist, #days=#km, Avg Water.")
   }
 
   if (ignoreExisting){
@@ -94,14 +94,11 @@ locateDataPairsSTOICH <- function(dataTables, timeDiff=7, timeUnits="days", dist
     mutate(closeDist = sapply(seq(1, length(sites$Id)), function (x) {list(closeSites[x,][closeSites[x,] < distance])}), .keep="all") %>%
     sf::st_drop_geometry()
 
-  tempTables <- dataTables[["tbl_SampleEvent"]] %>%
-    dplyr::rename_with(~str_c(., ".SampleEvent"), everything()) %>%
-    dplyr::inner_join(dplyr::rename_with(sites, ~str_c(., ".Site"), everything()),
-                      by=c("SiteId.SampleEvent"="Id.Site")) %>%
-    dplyr::rename(Id.Site = SiteId.SampleEvent) %>%
-    dplyr::select(c("Id.SampleEvent", "SampleDate.SampleEvent", "Id.Site", "Latitude.Site", "Longitude.Site", "closeIds.Site", "closeDist.Site"))
-
-  colnames(tempTables) <- c("SampleEventId", "SampleDate", "SiteId", "Latitude", "Longitude", "closeIds", "closeDist")
+  tempTables <- dataTables[["tbl_SampleEvent"]] |>
+    dplyr::select(!c("Notes")) |>
+    rename(SampleEventId = Id) |>
+    dplyr::inner_join(sites, by=c("SiteId"="Id")) |>
+    dplyr::select(!c("Notes"))
 
   watTable <- tempTables %>%
     dplyr::filter(SampleEventId %in% watEventIds) %>%
@@ -112,8 +109,7 @@ locateDataPairsSTOICH <- function(dataTables, timeDiff=7, timeUnits="days", dist
     dplyr::mutate(minDate = SampleDate - period(timeDiff, unit=timeUnits), .keep="all") %>%
     dplyr::mutate(maxDate = SampleDate + period(timeDiff, unit=timeUnits), .keep="all") %>%
     dplyr::rowwise() %>%
-    dplyr::mutate(check = list(watTable$SampleDate > minDate &
-                                 watTable$SampleDate < maxDate), .keep="unused") %>%
+    dplyr::mutate(check = list(date_compare(watTable, c(minDate, maxDate), "range")), .keep="unused") %>%
     dplyr::mutate(watIds = list(watTable$SampleEventId[check]), .keep="all") %>%
     dplyr::mutate(watSiteIds = list(watTable$SiteId[check]), .keep="all") %>%
     dplyr::mutate(watLat = list(watTable$Latitude[check]), .keep="all") %>%
