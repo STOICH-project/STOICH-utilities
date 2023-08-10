@@ -4,15 +4,15 @@
 \alias{filterSTOICH}
 \title{Filter Data in the STOICH Data Tables}
 \usage{
-filterSTOICH(dataTables, tableVar = NA, var, val, condition)
+filterSTOICH(dataTables, var, val, condition)
 }
 \arguments{
 \item{dataTables}{The STOICH data tables loaded using loadSTOICH.}
 
-\item{tableVar}{The STOICH table that the variable belongs to. Only used if there are multiple variables with the same name (such as "Notes")}
-
 \item{var}{The STOICH variable to filter. Use View(stoichData[\link{"metadata"}]) to see a table of all variables and their descriptions
-(assumes data was loaded into the variable "stoichData").}
+(assumes data was loaded into the variable "stoichData"). The variable can be either the joined variable name (including the table name)
+"SampleDate.SampleEvent" or the prejoin name "SampleDate". The joined variable name will be required for multiple variables with the same
+name (such as "Notes").}
 
 \item{val}{The value or value range for the variable you want to filter.
 The conditions "greater than" and "less than" only work with a single numeric or date value, while "equal" and "not equal" work with
@@ -20,6 +20,8 @@ a single value or an array of values (text, numeric or date). The "range" condit
 
 \item{condition}{The criteria used for filtering (greater than, less than, equal, not equal, range, etc.). See the val parameter for
 the possible inputs for each condition.}
+
+\item{tableVar}{The STOICH table that the variable belongs to. Only used if there are multiple variables with the same name (such as "Notes")}
 }
 \value{
 The STOICH data tables after filtering has been applied.
@@ -35,7 +37,7 @@ stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
 # filtering by table such as:
 stoichFiltered <- filterSTOICH(dataTables=stoichData, var="TrophicMode", val="photoautotroph", condition="equal")
 stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Latitude", val=c(54.1, 103.1), condition="range")
-stoichFiltered <- filterSTOICH(dataTables=stoichData, tableVar="tbl_OrganismStoichiometry", var="Type", val="seston", condition="equal")
+stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Type.OrganismStoichiometry", val="seston", condition="equal")
 stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Name", val=c("Suggs", "Barco"), condition="contains")
 
 stoichTable <- joinSTOICH(stoichFiltered)

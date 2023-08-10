@@ -8,7 +8,9 @@
 #' @param dataTables The STOICH data tables loaded using loadSTOICH.
 #' @param tableVar The STOICH table that the variable belongs to. Only used if there are multiple variables with the same name (such as "Notes")
 #' @param var The STOICH variable to filter. Use View(stoichData[["metadata"]]) to see a table of all variables and their descriptions
-#'   (assumes data was loaded into the variable "stoichData").
+#'   (assumes data was loaded into the variable "stoichData"). The variable can be either the joined variable name (including the table name)
+#'   "SampleDate.SampleEvent" or the prejoin name "SampleDate". The joined variable name will be required for multiple variables with the same
+#'   name (such as "Notes").
 #' @param val The value or value range for the variable you want to filter.
 #'   The conditions "greater than" and "less than" only work with a single numeric or date value, while "equal" and "not equal" work with
 #'   a single value or an array of values (text, numeric or date). The "range" condition requires an array of 2 numeric or date values.
@@ -25,7 +27,7 @@
 #' # filtering by table such as:
 #' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="TrophicMode", val="photoautotroph", condition="equal")
 #' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Latitude", val=c(54.1, 103.1), condition="range")
-#' stoichFiltered <- filterSTOICH(dataTables=stoichData, tableVar="tbl_OrganismStoichiometry", var="Type", val="seston", condition="equal")
+#' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Type.OrganismStoichiometry", val="seston", condition="equal")
 #' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Name", val=c("Suggs", "Barco"), condition="contains")
 #'
 #' stoichTable <- joinSTOICH(stoichFiltered)
@@ -33,7 +35,7 @@
 #' }
 #'
 #' @export
-filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
+filterSTOICH <- function(dataTables, var, val, condition){
   # Verify the tables are in the proper format for filtering
   verifySTOICH(dataTables)
 
@@ -42,6 +44,14 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
 
   if (!is.character(var)){
     stop(paste("The variable entered:", var, "has class:", class(var), " and should be character. Please enter a valid variable name."))
+  }
+
+  varParts <- strsplit(var, "\\.")[[1]]
+  if (length(varParts) == 2){
+    var <- varParts[1]
+    tableVar <- varParts[2]
+  } else {
+    tableVar <- as.character(NA)
   }
 
   # Get the metadata for the selected variable
@@ -58,16 +68,32 @@ filterSTOICH <- function(dataTables, tableVar=NA, var, val, condition){
   } else if (count(varMetadata)[[1]] > 1){
     # If there are multiple entries for the selected variable, filter based on table.
     if (!is.character(tableVar) | is.na(tableVar)){
-      stop(paste("The variable entered: \"", var,
-                 "\" is not unique and no value was supplied for tableVar.\nPlease supply the proper table.\n\n",
-                 "Tables associated with variable: \"", var, "\" are:\n",
-                 str_c(varMetadata$table, collapse=",  "), sep=""))
+      varOptions <- paste(var, str_remove_all(varMetadata$table, "tbl_"), sep=".")
+      print("\"var\" is not unique did you mean to select one of the following?\noption  var\n")
+      for (i in 1:length(varOptions)){
+        print(paste(str_pad(i, 6, side="left", pad=" "), "  ", varOptions[i], "\n", sep=""))
+      }
+      print("     N  None of the above or stop.\n")
+      print(paste("Please select one of the following:", str_c(c(1:length(varOptions), "N"), collapse=",  ")))
+      useSelection <- ""
+      while (!(tolower(useSelection) %in% c(1:length(varOptions), "N", "n", ""))){
+        useSelection <- readline(prompt=paste("Please select one of the following:", str_c(c(1:length(varOptions), "N"), collapse=",  ")))
+      }
+      if (useSelection %in% c(1:length(varOptions))){
+
+      } else {
+        stop(paste("Please used the joined variable name to specify the table.",
+                   "Joined variable names for variable: \"", var, "\" are:\n",
+                   str_c(varOptions, collapse=",  "),
+                   "\n\nPlease rerun filterSTOICH with one of the joined variable names listed above.", sep=""))
+      }
     } else {
       varMetadata <- varMetadata %>%
-        dplyr::filter(table == tableVar)
+        dplyr::filter(table == paste("tbl_", tableVar, sep=""))
 
       if (count(varMetadata)[[1]] == 0){
-        stop(paste("The table entered:", tableVar, "is not listed in association with variable:", var, "in the metadata table. Please enter the proper table."))
+        stop(paste("The table entered:", tableVar, "does not have variable:", var,
+                   "in the metadata table. Try using metadataSTOICH(dataTables, \"joined\") to list the variable names with their table and rerun filterSTOICH."))
       }
     }
 
