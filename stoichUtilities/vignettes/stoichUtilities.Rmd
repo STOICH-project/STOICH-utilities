@@ -191,7 +191,7 @@ help(loadSTOICH)
 
 # Guide to the STOICH Data
 ## Data Structure
-![Data structure and relationship for STOICH data tables.](C:/Users/cpetersen4/Documents/GitHub/STOICHDatabase/docs/data_model_narrow.svg){#id .class width=70% height=70%}
+![Data structure and relationship for STOICH data tables.](~/GitHub/STOICHDatabase/docs/data_model_narrow.svg){#id .class width=70% height=70%}
 
 ## Table Structure View
 
