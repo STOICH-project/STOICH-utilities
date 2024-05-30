@@ -1,0 +1,486 @@
+---
+title: "Examples"
+author: "Chad Petersen"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    df_print: paged
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(summarytools)
+library(DataExplorer)
+
+library(sf)
+library(leaflet)
+
+library(lubridate)
+library(maps)
+library(gganimate)
+
+library(gt)
+
+library(stoichUtilities)
+
+
+
+basePath <- file.path(path.expand("~"), "data", "stoichdb", "currentDB", "STOICH_Beta_Release_2024-05-23")
+
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+
+OneDrive <- "C:/Users/cpetersen4/OneDrive - University of Nebraska-Lincoln/STOICH/Presentations/Beta Users"
+
+
+```
+
+## Setting the path to the data.
+```{r data_path_setup, eval=FALSE}
+# Load required packages.
+library(tidyverse)
+library(stoichUtilities)
+
+# Three options for creating a variable to store the path to the STOICH data.
+# With a text string.
+basePath <- "C:/Users/chad/Documents/data/STOICH_Beta_Release_2024-05-21"
+# Building the path starting at your Documents directory.
+basePath <- file.path(path.expand("~"), "data", "STOICH_Beta_Release_2024-05-21")
+# Or if you set the working directory to point to the data.
+setwd(basePath)
+basePath <- getwd()
+
+# Load the STOICH data (using a predefined path variable)
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+```
+```{r data_path}
+# stoichData is now a list of tables. To see the names of those tables use names.
+names(stoichData)
+
+# Print the first 5 rows of the Source table.
+stoichData[["tbl_Source"]] |> slice_head(n=5)
+```
+
+## Exploring the Data
+```{r Exploring_Data_setup, eval=FALSE}
+# Load required packages.
+library(tidyverse)
+library(summarytools)
+library(DataExplorer)
+
+library(stoichUtilities)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+#Load the data.
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+```
+```{r Exploring_Data, results='hide', echo = TRUE, warning = FALSE, message=FALSE}
+# Join the list of tables into one wide table.
+stoichTable <- stoichData |>
+  stoichUtilities::joinSTOICH()
+```
+```{r Exploring_Data dfSummary show code, eval=FALSE}
+# Create a summary of the STOICH data table using summarytools formated for easy viewing (output only shows the first 4 columns).
+view(summarytools::dfSummary(stoichTable))
+```
+[dfSummary output](./dfSummary.html)
+
+```{r Exploring_Data DataExplorer show code, eval=FALSE}
+# Create a report of the STOICH data table using DataExplorer (output only uses some Source/Contact columns and CNP columns from the OrganismStoichiometry table).
+DataExplorer::create_report(stoichTable)
+```
+```{r Exploring_Data select data, results='hide', echo = FALSE, warning = FALSE, message=FALSE}
+# DataExplorer::create_report(stoichTbl, output_format=rmarkdown::html_fragment(), output_dir = basePath, output_file = "dataexplorer.html")
+DataExplorer::create_report(stoichTable, output_format=rmarkdown::html_fragment(), output_dir = OneDrive, output_file = "DataExplorer.html")
+```
+```{r DataExplorer Link, results='asis', echo=FALSE}
+cat("<a href=\"./DataExplorer.html\">DataExplorer report output</a>")
+```
+
+
+## Plotting Example
+```{r Plotting_Example_setup, eval=FALSE, echo=TRUE}
+library(tidyverse)
+library(stoichUtilities)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+#Load the data.
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath) 
+```
+```{r Plotting_Example}
+# Select/filter the data you want.
+stoichTable <- stoichData |>
+  # Filter the variables we are interested in to remove any rows that don't have values.
+  stoichUtilities::filterSTOICH(var="Elevation", val=NA, condition="not equal") |>
+  stoichUtilities::filterSTOICH(var="Latitude", val=NA, condition="not equal") |>
+  stoichUtilities::filterSTOICH(var="CarbonToNitrogenRatio", val=NA, condition="not equal") |>
+  # Filter to select only rows where the Organism Type is "Seston".
+  stoichUtilities::filterSTOICH(var="Type.OrganismStoichiometry", val="Seston", condition="equal") |>
+  # Join all the tables into one large wide table.
+  stoichUtilities::joinSTOICH() |>
+  # Select only the columns we are interested in plotting.
+  select(c("Elevation.Site", "Latitude.Site", "CarbonToNitrogenRatio.OrganismStoichiometry")) |>
+  # Remove any text with 4 characters or more after a "." at the end ("$") of a string.
+  rename_with(~stringr::str_remove(.x, "\\.[a-zA-Z]{4,}$"))
+
+# Plot the elevation versus CN ratio as a line.
+ggplot(stoichTable, aes(x=Elevation, y=CarbonToNitrogenRatio)) +
+  geom_line()
+
+# If you want to look at a plot with average CN for elevation bins, you could use the summarize function after rounding the elevation data.
+smoothTable <- stoichTable |>
+  mutate(Elevation_Smooth = 100*round(Elevation/100)) |>
+  group_by(Elevation_Smooth) |>
+  summarize(mean_CN_ratio = mean(CarbonToNitrogenRatio))
+
+# Plot the averaged data.
+ggplot(smoothTable, aes(x=Elevation_Smooth, y=mean_CN_ratio)) +
+  geom_line()
+```
+
+## Mapping Example
+```{r Mapping_Example_setup, eval=FALSE, echo=TRUE}
+library(tidyverse)
+library(stoichUtilities)
+library(sf)
+library(leaflet)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+#Load the data.
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+```
+```{r Mapping_Example}
+# Select/filter the data you want.
+stoichTable <- stoichData |>
+  # Remove any locations without GPS data
+  stoichUtilities::filterSTOICH(var="Longitude", val=NA, condition="not equal") |>
+  stoichUtilities::filterSTOICH(var="Latitude", val=NA, condition="not equal") |>
+  # Filter to select three orders of Bryophytes.
+  stoichUtilities::filterSTOICH(var="TaxonomicOrder", val=c("hypnales", "marchantiales", "polygonales"), condition="equal") |>
+  # Join all the tables into one large wide table.
+  stoichUtilities::joinSTOICH() |>
+  # From here we pull out just the data we are interested in: GPS & taxonomy and shorten the variable names for convenience.
+  # Shorten the variable names.
+  rename(Latitude=Latitude.Site, Longitude=Longitude.Site, TaxonomicOrder=TaxonomicOrder.OrganismStoichiometry) |>
+  # Select the columns we are interested in.
+  select(c("Latitude", "Longitude", "TaxonomicOrder"))
+
+# Initiate the leaflet plot.
+myPlot <- leaflet() |>
+  # Select the background map style.
+  addProviderTiles(providers$OpenTopoMap)
+
+# Create colored markers (one for each order selected).
+blueIcon <- awesomeIcons(icon = 'ios-close', iconColor = 'black', library = 'ion', markerColor = "blue")
+greenIcon <- awesomeIcons(icon = 'ios-close', iconColor = 'black', library = 'ion', markerColor = "green")
+orangeIcon <- awesomeIcons(icon = 'ios-close', iconColor = 'black', library = 'ion', markerColor = "orange")
+
+# Add markers to the plot.
+myPlot <- myPlot |>
+  # Select (filter) only one order from the data.frame or table for each marker color.
+  addAwesomeMarkers(data = data.frame(stoichTable |> filter(TaxonomicOrder == "hypnales")), lng = ~Longitude, lat = ~Latitude, icon=blueIcon) |>
+  addAwesomeMarkers(data = data.frame(stoichTable |> filter(TaxonomicOrder == "marchantiales")), lng = ~Longitude, lat = ~Latitude, icon=greenIcon) |>
+  addAwesomeMarkers(data = data.frame(stoichTable |> filter(TaxonomicOrder == "polygonales")), lng = ~Longitude, lat = ~Latitude, icon=orangeIcon)
+
+# Display the plot.
+myPlot
+```
+
+## Mapping Example 2
+```{r Mapping_Example2_setup, eval=FALSE, echo=TRUE}
+library(tidyverse)
+library(lubridate)
+library(maps)
+library(gganimate)
+library(stoichUtilities)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+#Load the data.
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+```
+```{r Mapping_Example2}
+# Select/filter the data you want.
+stoichTable <- stoichData |>
+  stoichUtilities::filterSTOICH(var="Type.OrganismStoichiometry", val="Seston", condition="equal") |> 
+  stoichUtilities::filterSTOICH(var="Country", val="United States Of America", condition="equal") |>
+  stoichUtilities::joinSTOICH()
+
+# Load the state borders
+state_info <- map_data("state")
+
+# Map the state borders
+seston_map <- ggplot(data = state_info, mapping = aes(x=long, y=lat, group=group)) +
+  geom_polygon(color = "black", fill = "white") + 
+  coord_quickmap() +
+  theme_void() +
+  # Add the Seston data to the map of state borders and set the color using the C:N ratio.
+  geom_point(data = stoichTable, aes(x = Longitude.Site, y = Latitude.Site, color=CarbonToNitrogenRatio.OrganismStoichiometry, group=SampleYear.SampleEvent)) + 
+  labs(color="C:N")
+
+# Add animation using the year the sample was taken
+map_with_animation <- seston_map +
+  transition_time(SampleYear.SampleEvent) +
+  ggtitle('Year: {frame_time}',
+          subtitle = 'Frame {frame} of {nframes}')
+
+# Calculate the number of years there was sample data to determine the number of frames for the animation.
+num_years <- max(stoichTable$SampleYear.SampleEvent) - min(stoichTable$SampleYear.SampleEvent) + 1
+
+# Create the animation.
+animate(map_with_animation, nframes = num_years)
+```
+
+## Filtering Example
+```{r Filtering_Example_setup, eval=FALSE, echo=TRUE}
+library(tidyverse)
+library(stoichUtilities)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+#Load the data.
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+
+# Select/filter the data you want.
+stoichTable <- stoichData |>
+  # Filter to select only rows where the EcosystemType is "Wetland".
+  stoichUtilities::filterSTOICH(var="EcosystemType", val="Wetland", condition="equal") |>
+  # Join all the tables into one large wide table.
+  stoichUtilities::joinSTOICH() |>
+  View()
+
+# Only displaying the first 4 rows.
+```
+
+```{r Filtering_Example_show_table, eval=TRUE, echo=FALSE}
+stoichData |>
+  # Filter to select only rows where the EcosystemType is "Wetland".
+  stoichUtilities::filterSTOICH(var="EcosystemType", val="Wetland", condition="equal") |>
+  # Join all the tables into one large wide table.
+  stoichUtilities::joinSTOICH() |>
+  slice_head(n=4)
+```
+
+
+## Summarizing Data
+```{r Summarizing_Data_setup, eval=FALSE, echo=TRUE}
+library(tidyverse)
+library(stoichUtilities)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+#Load the data
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath) |>
+  # Join all the tables into one large wide table.
+  stoichUtilities::joinSTOICH() |>
+  # Use the dplyr package from the tidyverse to select the columns we are interested in. 
+  dplyr::select(c("Title.Source", "FirstAuthor.Source", "YearPublished.Source", "Journal.Source", "LitSurveyId.Source", "Organization.Source", "Id.Site")) |>
+  # Shorten column names because I don't want to keep typing ".Source".
+  dplyr::rename_all(~stringr::str_remove(.x, "\\.Source")) |>
+  # There are probably multiple samples/site so only keep unique entries of sites and sources.
+  unique() |>
+  # Group the data by Source columns.
+  dplyr::group_by(Title, FirstAuthor, YearPublished, Journal, LitSurveyId, Organization) |>
+  # Count the number of sites for each group.
+  dplyr::summarise(Number_of_Sites = n(), .groups="keep") |>
+  View()
+
+# Only displaying the first 4 rows.
+```
+```{r Summarizing_Data, eval=TRUE, echo=FALSE}
+#Load the data.
+stoichData |>
+  # Join all the tables into one large wide table.
+  stoichUtilities::joinSTOICH() |>
+  # Use the dplyr package from the tidyverse to select the columns we are interested in. 
+  dplyr::select(c("Title.Source", "FirstAuthor.Source", "YearPublished.Source", "Journal.Source", "LitSurveyId.Source", "Organization.Source", "Id.Site")) |>
+  # Shorten column names because I don't want to keep typing ".Source".
+  dplyr::rename_all(~stringr::str_remove(.x, "\\.Source")) |>
+  # There are probably multiple samples/site so only keep unique entries of sites and sources.
+  unique() |>
+  # Group the data by Source columns.
+  dplyr::group_by(Title, FirstAuthor, YearPublished, Journal, LitSurveyId, Organization) |>
+  # Count the number of sites for each group.
+  dplyr::summarise(Number_of_Sites = n(), .groups="keep") |> 
+  ungroup() |>
+  slice_head(n=4)
+```
+
+## Search Example
+### Solution 1: pulling a table from the raw data.
+```{r Search_Example_setup1, eval=FALSE, echo=TRUE}
+library(tidyverse)
+library(stoichUtilities)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+# Load the data
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+
+# Select just the Site table.
+stoichData[["tbl_Site"]] |>
+  # Find the row with the maximum Longitude value (drop rows with NA values).
+  filter(Longitude == mAX(stoichData[["Longitude"]], na.rm=TRUE)) |>
+  View()
+```
+```{r Search_Example1, eval=TRUE, echo=FALSE}
+stoichData[["tbl_Site"]] |>
+  # Find the row with the maximum Longitude value (drop rows with NA values).
+  filter(Longitude == max(stoichData$tbl_Site[["Longitude"]], na.rm=TRUE))
+```
+
+### Solution 2: working with the joined table.
+```{r Search_Example_setup2, eval=FALSE, echo=TRUE}
+library(tidyverse)
+library(stoichUtilities)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+#Load the data.
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+
+stoichTable <- stoichData |>
+  # Join all the tables into one large wide table.
+  stoichUtilities::joinSTOICH() |>
+  # Select just the columns from the Site table.
+  select(ends_with(".Site"))
+
+# Find the row with the maximum Longitude value
+stoichTable |>
+  filter(Longitude.Site == max(stoichTable[["Longitude.Site"]], na.rm=TRUE)) |> 
+  # There will probably be duplicates, so keep only unique values.
+  unique() |>
+  View()
+```
+```{r Search_Example2, eval=TRUE, echo=FALSE}
+stoichTable <- stoichData |>
+  stoichUtilities::joinSTOICH() |>
+  select(ends_with(".Site"))
+
+stoichTable |>
+  filter(Longitude.Site == max(stoichTable[["Longitude.Site"]], na.rm=TRUE)) |> 
+  unique()
+```
+
+## Filter and Summarize Example
+```{r Filter_and_Summarize_setup, eval=FALSE, echo=TRUE}
+library(tidyverse)
+library(stoichUtilities)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+# Load the data.
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+```
+```{r Filter_and_Summarize}
+#Load the data and select just the Site table.
+stoichTable <- stoichData |>
+  # Filter just December (month 12) data.
+  stoichUtilities::filterSTOICH(var="SampleMonth", val=as.integer(12), condition="equal") |>
+  # Filter just samples north of 45 degrees latitude.
+  stoichUtilities::filterSTOICH(var="Latitude", val=45, condition="greater than") |>
+  # Join all the tables into one large wide table.
+  stoichUtilities::joinSTOICH()
+
+# Count the number of rows.
+nrow(stoichTable)
+
+# Calculate the mean elevation for the samples.
+mean(stoichTable[["Elevation.Site"]], na.rm=TRUE)
+```
+
+## Filter and Search Example
+```{r Filter_and_Search_setup, eval=FALSE, echo=TRUE}
+library(tidyverse)
+library(stoichUtilities)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+# Load the data.
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+```
+```{r Filter_and_Search}
+# Load the data and pipe it ("|>" and "%>%" can pass a table into the next function) for further processing
+stoichTable <- stoichData |>
+  # Filter the STOICH data for any samples in Texas with Isotope13C content and remove any samples with unknown species.
+  stoichUtilities::filterSTOICH(var="State", val="Texas", condition="Equal") |>
+  stoichUtilities::filterSTOICH(var="Isotope13C", val=NA, condition="not equal") |>
+  stoichUtilities::filterSTOICH(var="TaxonomicSpecies", val=NA, condition="not equal") |>
+  # Join all the tables into one large wide table
+  stoichUtilities::joinSTOICH() |>
+  # Use the dplyr package from the tidyverse to select the columns we are interested in.
+  dplyr::select(c("TaxonomicKingdom.OrganismStoichiometry",
+                  "TaxonomicOrder.OrganismStoichiometry",
+                  "TaxonomicFamily.OrganismStoichiometry",
+                  "TaxonomicGenus.OrganismStoichiometry",
+                  "TaxonomicSpecies.OrganismStoichiometry",
+                  "Isotope13C.OrganismStoichiometry"))
+```
+```{r Filter_and_Search_echo_view, eval=FALSE, echo=TRUE}
+# Find the row with the minimum Isotope13C value
+stoichTable |> 
+  filter(Isotope13C.OrganismStoichiometry == min(stoichTable[["Isotope13C.OrganismStoichiometry"]])) |>
+  View()
+```
+```{r Filter_and_Search_view, eval=TRUE, echo=FALSE}
+filter(stoichTable, Isotope13C.OrganismStoichiometry == min(stoichTable[["Isotope13C.OrganismStoichiometry"]]))
+```
+
+
+## Filter, Summarize and Search Example
+```{r Filter_Summarize_and_Search_setup, eval=FALSE, echo=TRUE}
+library(tidyverse)
+library(stoichUtilities)
+
+basePath <- "C:\..." # Update this with your path to the data
+
+# Load the data.
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
+```
+```{r Filter_Summarize_and_Search}
+# Load the data and pipe it ("|>" and "%>%" can pass a table into the next function) for further processing
+stoichTable <- stoichData |>
+  # Filter the STOICH data for any samples in California with Isotope15N content and remove any samples with unknown species.
+  stoichUtilities::filterSTOICH(var="State", val="California", condition="Equal") |>
+  stoichUtilities::filterSTOICH(var="Isotope15N", val=NA, condition="not equal") |>
+  stoichUtilities::filterSTOICH(var="TaxonomicSpecies", val=NA, condition="not equal") |>
+  # Join all the tables into one large wide table
+  stoichUtilities::joinSTOICH() |>
+  # Use the dplyr package from the tidyverse to select the columns we are interested in.
+  dplyr::select(c("TaxonomicKingdom.OrganismStoichiometry",
+                  "TaxonomicOrder.OrganismStoichiometry",
+                  "TaxonomicFamily.OrganismStoichiometry",
+                  "TaxonomicGenus.OrganismStoichiometry",
+                  "TaxonomicSpecies.OrganismStoichiometry",
+                  "Isotope15N.OrganismStoichiometry")) |>
+  # Shorten column names because I don't want to keep typing ".OrganismStoichiometry".
+  dplyr::rename_all(~stringr::str_remove(.x, "\\.OrganismStoichiometry")) |>
+  # Group the data by Taxonomy.
+  dplyr::group_by(TaxonomicKingdom, TaxonomicOrder, TaxonomicFamily, TaxonomicGenus, TaxonomicSpecies) |>
+  # Average the N15 Isotope data for each group.
+  dplyr::summarise(mean_Isotope15N = mean(Isotope15N), .groups="keep")
+```
+```{r Filter_Summarize_and_Search_echo_view, eval=FALSE, echo=TRUE}
+# Find the row with the maximum average Isotope15N value
+stoichTable |> 
+  filter(mean_Isotope15N == max(stoichTable[["mean_Isotope15N"]])) |>
+  View()
+```
+```{r Filter_Summarize_and_Search_view, eval=TRUE, echo=FALSE}
+filter(stoichTable, mean_Isotope15N == max(stoichTable[["mean_Isotope15N"]]))
+```
+
+
+<!-- ## New Example -->
+<!-- ```{r New_Example_setup, results='hide', echo = TRUE, warning = FALSE, message=FALSE} -->
+<!-- library(tidyverse) -->
+<!-- library(stoichUtilities) -->
+<!-- # Update this with your path to the data -->
+<!-- basePath <- file.path(path.expand("~"), "data", "STOICH_Beta_Release_2024-02-05") -->
+<!-- ``` -->
+<!-- ```{r New_Example} -->
+<!-- ``` -->
+

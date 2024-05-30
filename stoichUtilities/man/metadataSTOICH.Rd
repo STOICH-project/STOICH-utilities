@@ -10,9 +10,9 @@ metadataSTOICH(dataTables, metadata = NA)
 \item{dataTables}{The STOICH data tables loaded using loadSTOICH.}
 
 \item{metadata}{A character describing what type of metadata is being requested. Possible options are:
-"variables", "joined", "full"
-"joined" returns the variable names after joinSTOICH is performed (you can use this name before the join to identify a table and variable).
-"full" returns a table of all the variables, the table name it belongs to and what data is stored in each variable.}
+"variables", "joined", "full".
+metadata="joined" returns the variable names after joinSTOICH is performed (you can use this name before the join to identify a table and variable).
+metadata="full" returns a table of all the variables, the table name it belongs to and what data is stored in each variable.}
 }
 \value{
 A vector or table with the requested data.

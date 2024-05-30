@@ -20,8 +20,6 @@ a single value or an array of values (text, numeric or date). The "range" condit
 
 \item{condition}{The criteria used for filtering (greater than, less than, equal, not equal, range, etc.). See the val parameter for
 the possible inputs for each condition.}
-
-\item{tableVar}{The STOICH table that the variable belongs to. Only used if there are multiple variables with the same name (such as "Notes")}
 }
 \value{
 The STOICH data tables after filtering has been applied.

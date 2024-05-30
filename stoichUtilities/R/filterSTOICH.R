@@ -6,7 +6,6 @@
 #' @author Chad Petersen \email{cpetersen4@unl.edu}
 #'
 #' @param dataTables The STOICH data tables loaded using loadSTOICH.
-#' @param tableVar The STOICH table that the variable belongs to. Only used if there are multiple variables with the same name (such as "Notes")
 #' @param var The STOICH variable to filter. Use View(stoichData$metadata) to see a table of all variables and their descriptions
 #'   (assumes data was loaded into the variable "stoichData"). The variable can be either the joined variable name (including the table name)
 #'   "SampleDate.SampleEvent" or the prejoin name "SampleDate". The joined variable name will be required for multiple variables with the same
