@@ -1,11 +1,16 @@
 Package: stoichUtilities
 Title: Provides user oriented tools to access STOICH Project data.
 Version: 0.9.4
-Authors@R: 
-    person("Chad", "Petersen", , "cpetersen4@unl.edu", role = c("aut", "cre"))
+Authors@R: c(
+      person("Chad", "Petersen", , "cpetersen4@unl.edu", role = c("aut", "cre"))
+      person("", "", email = "", role = "ctb")
+      person("U.S. National Science Foundation", role = "fnd")
+    )
 Description: 
     The STOICH-utilities R package provides user tools for working with STOICH database files. 
     This package is designed to enable easier and more robust access to the data files from STOICH database releases.
+URL: https://github.com/STOICH-project/STOICH-utilities, https://snr-stoich.unl.edu/, https://stoichproject.wordpress.com/
+BugReports: https://github.com/STOICH-project/STOICH-utilities/issues
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -17,11 +22,14 @@ Imports:
     lubridate,
     readr,
     stringr,
-    sf,
-    units
+    sf
 Suggests: 
     knitr,
     rmarkdown,
+    gt,
+    glue,
+    gluedown,
+    kableExtra,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
