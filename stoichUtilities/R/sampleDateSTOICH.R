@@ -133,13 +133,27 @@ createSampleDate <- function(tbl_SampleEvent){
   if (check_DateType(tbl_SampleEvent)){
     return(tbl_SampleEvent |>
       mutate(SampleDate = ymd(if_else(is.na(SampleDay) | is.na(SampleMonth) | is.na(SampleYear),
-                                   "00010101",
-                                   paste(as.character(SampleYear),
-                                         str_pad(as.character(SampleMonth), width=2, side="left", pad="0"),
-                                         str_pad(as.character(SampleDay), width=2, side="left", pad="0"),
-                                         sep="")))) |>
+                                      "00010101",
+                                      paste(as.character(SampleYear),
+                                            str_pad(as.character(SampleMonth), width=2, side="left", pad="0"),
+                                            str_pad(as.character(SampleDay), width=2, side="left", pad="0"),
+                                            sep="")))) |>
       mutate(SampleDate = if_else(SampleDate == ymd("00010101"), as.Date(NA), SampleDate)))
   } else {
     stop("SampleYear, SampleMonth or SampleDay is expected as an integer or character please investigate and correct.")
   }
+}
+
+# Check if the dates are within a specified time duration
+#' @noRd
+datesInRange <- function(iY, iM, iD, jY, jM, jD, tPeriod, tUnits){
+  # convert to a lubridate period
+  tPeriod <- period(tPeriod, tUnits)
+
+  return(ifelse(is.na(iD) | is.na(jD),
+                case_when(tPeriod < months(1) ~ FALSE, # lubridate treats 31 days as 1 month for comparisons
+                          (is.na(iM) | is.na(jM)) & tPeriod < years(1)  ~ FALSE,
+                          (is.na(iM) | is.na(jM)) ~ years(abs(iY - jY)) < tPeriod,
+                          TRUE ~ months(abs(iM + 12*iY - (jM + 12*jY))) < tPeriod),
+                abs(ymd(paste0(iY, "-", iM, "-", iD)) - ymd(paste0(jY, "-", jM, "-", jD))) < tPeriod))
 }

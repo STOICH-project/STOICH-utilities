@@ -1,9 +1,8 @@
 Package: stoichUtilities
 Title: Provides user oriented tools to access STOICH Project data.
-Version: 0.9.4
+Version: 0.9.5
 Authors@R: c(
-      person("Chad", "Petersen", , "cpetersen4@unl.edu", role = c("aut", "cre"))
-      person("", "", email = "", role = "ctb")
+      person("Chad", "Petersen", , "cpetersen4@unl.edu", role = c("aut", "cre")),
       person("U.S. National Science Foundation", role = "fnd")
     )
 Description: 

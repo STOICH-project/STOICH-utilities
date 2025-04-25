@@ -105,11 +105,11 @@ locateDataPairsSTOICH <- function(dataTables, timeDiff=7, timeUnits="days", dist
     dplyr::select(!c("closeIds", "closeDist"))
 
   orgTable <- tempTables %>%
-    dplyr::filter(SampleEventId %in% orgEventIds) %>%
-    dplyr::mutate(minDate = SampleDate - period(timeDiff, unit=timeUnits), .keep="all") %>%
-    dplyr::mutate(maxDate = SampleDate + period(timeDiff, unit=timeUnits), .keep="all") %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(check = list(date_compare(watTable, c(minDate, maxDate), "range")), .keep="unused") %>%
+    dplyr::filter(SampleEventId %in% orgEventIds) |>
+    rowwise() |>
+    mutate(check = list(datesInRange(SampleYear, SampleMonth, SampleDay,
+                                     watTable$SampleYear, watTable$SampleMonth, watTable$SampleDay,
+                                     timeDiff, timeUnits))) |>
     dplyr::mutate(watIds = list(watTable$SampleEventId[check]), .keep="all") %>%
     dplyr::mutate(watSiteIds = list(watTable$SiteId[check]), .keep="all") %>%
     dplyr::mutate(watLat = list(watTable$Latitude[check]), .keep="all") %>%

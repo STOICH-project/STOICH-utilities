@@ -21,11 +21,17 @@ filterJoinSTOICH <- function(dataTables, filtTable){
   # Verify the tables are in the proper format for joining
   verifySTOICH(dataTables)
 
-  # Order should only matter for the contact table, everything else is filtered through the SampleEvent table.
+  # Order should only matter for the Contact and InputFile tables, everything else is filtered through the SampleEvent table.
   if (filtTable == "tbl_Contact"){
     dataTables[["tbl_Source"]] <- dataTables[["tbl_Source"]] %>%
       dplyr::filter(Id %in% unique(dataTables[["tbl_SampleEvent"]]$SourceId)) %>%
       dplyr::filter(ContactId %in% unique(dataTables[["tbl_Contact"]]$Id))
+  } else if (filtTable == "tbl_InputFile"){
+    dataTables[["tbl_WaterChemistry"]] <- dataTables[["tbl_WaterChemistry"]] %>%
+      dplyr::filter(InputFileId %in% unique(dataTables[["tbl_InputFile"]]$Id))
+
+    dataTables[["tbl_OrganismStoichiometry"]] <- dataTables[["tbl_OrganismStoichiometry"]] %>%
+      dplyr::filter(InputFileId %in% unique(dataTables[["tbl_InputFile"]]$Id))
   }
 
   # If the OrganismStoichiometry or WaterChemistry tables were filtered then filter the other to ensure the final join
@@ -40,7 +46,6 @@ filterJoinSTOICH <- function(dataTables, filtTable){
   }
 
   dataTables[["tbl_SampleEvent"]] <- dataTables[["tbl_SampleEvent"]] %>%
-    dplyr::filter(InputFileId %in% unique(dataTables[["tbl_InputFile"]]$Id)) %>%
     dplyr::filter(SourceId %in% unique(dataTables[["tbl_Source"]]$Id)) %>%
     dplyr::filter(SiteId %in% unique(dataTables[["tbl_Site"]]$Id)) %>%
     dplyr::filter(Id %in% sampleEventIds)
@@ -52,7 +57,8 @@ filterJoinSTOICH <- function(dataTables, filtTable){
     dplyr::filter(Id %in% unique(dataTables[["tbl_SampleEvent"]]$SiteId))
 
   dataTables[["tbl_InputFile"]] <- dataTables[["tbl_InputFile"]] %>%
-    dplyr::filter(Id %in% unique(dataTables[["tbl_SampleEvent"]]$InputFileId))
+    dplyr::filter(Id %in% unique(c(dataTables[["tbl_WaterChemistry"]]$InputFileId,
+                                   dataTables[["tbl_OrganismStoichiometry"]]$InputFileId)))
 
   dataTables[["tbl_WaterChemistry"]] <- dataTables[["tbl_WaterChemistry"]] %>%
     dplyr::filter(SampleEventId %in% unique(dataTables[["tbl_SampleEvent"]]$Id))
