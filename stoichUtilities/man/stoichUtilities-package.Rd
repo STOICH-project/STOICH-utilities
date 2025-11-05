@@ -6,7 +6,7 @@
 \alias{stoichUtilities-package}
 \title{stoichUtilities: Provides user oriented tools to access STOICH Project data}
 \description{
-The STOICH-utilities R package provides user tools for working with STOICH database files. This package is designed to enable easier and more robust access to the data files from STOICH database releases.
+The stoichUtilities R package provides user tools for working with STOICH database files. This package is designed to enable easier and more robust access to the data files from STOICH database releases.
 }
 \seealso{
 Useful links:
@@ -23,6 +23,10 @@ Useful links:
 
 Other contributors:
 \itemize{
+  \item Jessica Corman \email{jcorman3@unl.edu} [contributor]
+  \item Halvor Halvorson \email{hhalvorson@uca.edu} [contributor]
+  \item Casey Brucker \email{cbrucker@uwyo.edu} [contributor]
+  \item Eli Wess \email{ewess@uca.edu} [contributor]
   \item U.S. National Science Foundation [funder]
 }
 
