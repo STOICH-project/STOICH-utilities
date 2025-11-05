@@ -15,8 +15,14 @@
 #' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
 #'
 #' # filtering by table such as:
-#' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="TrophicMode", val="photoautotroph", condition="not equal") |>
-#'   filterSTOICH(dataTables=stoichFiltered, var="Latitude", val=c(104.92, 103.01), condition="range")
+#' stoichFiltered <- filterSTOICH(dataTables=stoichData,
+#'                                var="TrophicMode",
+#'                                val="photoautotroph",
+#'                                condition="not equal") |>
+#'   filterSTOICH(dataTables=stoichFiltered,
+#'                var="Latitude",
+#'                val=c(104.92, 103.01),
+#'                condition="range")
 #'
 #' stoichTable <- joinSTOICH(stoichFiltered)
 #'
@@ -34,7 +40,12 @@ joinSTOICH <- function(dataTables){
                         by=c("Id.Source"="SourceId.SampleEvent")) %>%
       dplyr::inner_join(dplyr::rename_with(dataTables[["tbl_Site"]], ~str_c(., ".Site"), everything()),
                         by=c("SiteId.SampleEvent"="Id.Site")) %>%
-      dplyr::rename(Id.Site = SiteId.SampleEvent) %>%
+      dplyr::rename(Id.Site = "SiteId.SampleEvent") %>%
+      # dplyr::full_join(dplyr::rename_with(dataTables[["tbl_WaterChemistry"]], ~str_c(., ".WaterChemistry"), everything()) %>%
+      #                    dplyr::inner_join(dplyr::rename_with(dataTables[["tbl_InputFile"]], ~str_c(., ".InputFile.WaterChemistry"), everything()),
+      #                                      by=c("InputFileId.WaterChemistry"="Id.InputFile.WaterChemistry")),
+      #                  by=c("Id.SampleEvent"="SampleEventId.WaterChemistry"),
+      #                  relationship = "one-to-one") %>%
       dplyr::full_join(dplyr::rename_with(dataTables[["tbl_WaterChemistry"]], ~str_c(., ".WaterChemistry"), everything()) %>%
                          dplyr::inner_join(dplyr::rename_with(dataTables[["tbl_InputFile"]], ~str_c(., ".InputFile.WaterChemistry"), everything()),
                                            by=c("InputFileId.WaterChemistry"="Id.InputFile.WaterChemistry")),

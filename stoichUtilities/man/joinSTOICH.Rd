@@ -21,8 +21,14 @@ Joins the STOICH data tables from release files into a single table.
 stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
 
 # filtering by table such as:
-stoichFiltered <- filterSTOICH(dataTables=stoichData, var="TrophicMode", val="photoautotroph", condition="not equal") |>
-  filterSTOICH(dataTables=stoichFiltered, var="Latitude", val=c(104.92, 103.01), condition="range")
+stoichFiltered <- filterSTOICH(dataTables=stoichData,
+                               var="TrophicMode",
+                               val="photoautotroph",
+                               condition="not equal") |>
+  filterSTOICH(dataTables=stoichFiltered,
+               var="Latitude",
+               val=c(104.92, 103.01),
+               condition="range")
 
 stoichTable <- joinSTOICH(stoichFiltered)
 

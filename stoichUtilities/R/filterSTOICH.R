@@ -24,10 +24,22 @@
 #' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
 #'
 #' # filtering by table such as:
-#' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="TrophicMode", val="photoautotroph", condition="equal")
-#' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Latitude", val=c(54.1, 103.1), condition="range")
-#' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Type.OrganismStoichiometry", val="seston", condition="equal")
-#' stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Name", val=c("Suggs", "Barco"), condition="contains")
+#' stoichFiltered <- filterSTOICH(dataTables=stoichData,
+#'                                var="TrophicMode",
+#'                                val="photoautotroph",
+#'                                condition="equal")
+#' stoichFiltered <- filterSTOICH(dataTables=stoichData,
+#'                                var="Latitude",
+#'                                val=c(54.1, 103.1),
+#'                                condition="range")
+#' stoichFiltered <- filterSTOICH(dataTables=stoichData,
+#'                                var="Type.OrganismStoichiometry",
+#'                                val="seston",
+#'                                condition="equal")
+#' stoichFiltered <- filterSTOICH(dataTables=stoichData,
+#'                                var="Name",
+#'                                val=c("Suggs", "Barco"),
+#'                                condition="contains")
 #'
 #' stoichTable <- joinSTOICH(stoichFiltered)
 #'
@@ -56,7 +68,7 @@ filterSTOICH <- function(dataTables, var, val, condition){
   # Get the metadata for the selected variable
   if (var %in% dataTables[["metadata"]]$variable){
     varMetadata <- dataTables[["metadata"]] %>%
-      dplyr::filter(variable == var)
+      dplyr::filter(.data$variable == var)
   } else {
     stop(paste("The variable entered:", var, "is not listed in the metadata table. Please enter a valid variable name."))
   }

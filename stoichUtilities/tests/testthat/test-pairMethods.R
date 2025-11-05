@@ -1,87 +1,106 @@
 rm(list=ls())
 
 # Load required packages.
-library(tidyverse)
-library(stoichUtilities)
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(stringr)
+library(readr)
 library(lubridate)
+library(sf)
+library(units)
+library(jsonlite)
+library(stoichUtilities)
+library(testthat)
 
-myPath <- file.path(path.expand("~"), "data", "stoichdb", "currentDB", "STOICH_Beta_Release_2023-07-21")
+#### Code for full database
+# basePath <- file.path(path.expand("~"), "data", "stoichdb", "currentDB", "STOICH_Beta_Release_2025-09-10")
 
-stoichData <- stoichUtilities::loadSTOICH(dataPath=myPath)
+#### Code for NEON only database for smaller test dataset
+basePath <- system.file("testdata", "STOICH_NEON_Only_2025-09-10", package="stoichUtilities")
 
-stoichTable <- stoichData |>
-#   stoichUtilities::filterSTOICH(var="SampleDate", val="20080402", condition="greater than") |>
-#   stoichUtilities::filterSTOICH(var="SampleDate", val="20090402", condition="less than") |>
-#   stoichUtilities::filterSTOICH(var="State", val="Florida", condition="not equal") |>
-    stoichUtilities::filterSTOICH(var="EcosystemType", val="Salt Marsh", condition="equal")
-#   # Join all the tables into one large wide table
-#   stoichUtilities::joinSTOICH()
-#
-# # Match organism stoichiometry data with water chemsitry data for samples that weren't taken at the exact same time
-# stoichPaired <- stoichUtilities::locateDataPairsSTOICH(stoichData, timeDiff=2, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE)
+stoichData <- loadSTOICH(basePath) #|>
+  # filterSTOICH(var="FirstAuthor", val="Neon", condition="contains") |> # line not needed for NEON only dataset, but left to make it consistent between datasets
+  # filterSTOICH(var="SampleYear", val=as.integer(2018),  condition="less than")
 
-nrow(stoichTable$tbl_OrganismStoichiometry)
-nrow(stoichTable$tbl_WaterChemistry)
+# stoichData[["tbl_Source"]] <- stoichData[["tbl_Source"]] |>
+#   filter(str_detect(FirstAuthor, "Neon", negate=TRUE))
+# stoichData <- filterJoinSTOICH(stoichData, "tbl_Source")
 
 
+#### Code to write a NEON only database version
+# basePath <- file.path(path.expand("~"), "GitHub", "STOICH-utilities", "stoichUtilities",
+#                       "inst", "testdata", "STOICH_NEON_Only_2025-09-10")
+# library(stoichCommon)
+# if (!dir.exists(basePath)){dirc <- dir.create(basePath, recursive=TRUE)}
+# stoichCommon::getStoichMeta() |>
+#   dplyr::select(c("SQL_Variable", "table", "xlsx_description", "values", "dataType")) |>
+#   tidyr::drop_na(SQL_Variable) |>
+#   dplyr::mutate(Units = if_else(stringr::str_to_lower(stringr::str_trim(values)) %in% c("meters", "degrees", "celsius", "percent", "us/cm"),
+#                                 stringr::str_trim(values),
+#                                 as.character(NA)), .keep="all") |>
+#   dplyr::mutate(values = if_else(is.na(Units) | Units == "", values, as.character(NA)), .keep="all") |>
+#   dplyr::rename(variable = SQL_Variable) |>
+#   dplyr::rename(description = xlsx_description) |>
+#   readr::write_csv(file.path(basePath, "STOICH_metadata.csv"))
+# for (iTbl in keep(names(stoichData), ~str_detect(.x, "^tbl_"))){
+#   write_csv(stoichData[[iTbl]], file.path(basePath, paste0(iTbl, ".csv")))
+# }
 
-stoichData$tbl_InputFile = tibble(Id = c(1))
+# pairSummary <- function(dataTbl, timeDiff){
+#   return(dataTbl |>
+#            mutate(WaterEventId = str_extract(Notes.WaterChemistry, "(?<=SampleEventId = )[0-9]+"), .after="SampleDate.SampleEvent") |>
+#            mutate(CheckDate = ymd(str_extract(Notes.WaterChemistry, "[0-9]{4}-[0-9]{2}-[0-9]{2}"))  - SampleDate.SampleEvent < timeDiff, .after="SampleDate.SampleEvent") |>
+#            mutate(CheckLat = as.numeric(str_extract_all(Notes.WaterChemistry, "(?<=Latitude = )-?[0-9]+\\.[0-9]*")) - Latitude.Site, .after="SampleDate.SampleEvent") |>
+#            mutate(CheckLong = as.numeric(str_extract_all(Notes.WaterChemistry, "(?<=Longitude = )-?[0-9]+\\.[0-9]*")) - Longitude.Site, .after="SampleDate.SampleEvent"))
+# }
 
-stoichData$tbl_Contact = tibble(Id = c(1))
-
-stoichData$tbl_Source = tibble(Id=c(1), ContactId=c(1))
-
-stoichData$tbl_Site = tibble(Latitude=c(40.9008, 40.9008, 40.9008, 40.9808),
-                             Longitude=c(-96.719894, -96.739117, -96.758,-96.758)) |>
-  tibble::rowid_to_column("Id") |>
-  mutate(Id = Id + 10) |>
-  mutate(Notes=as.character(NA))
-
-# Site 14 is about 5.6 miles or ~9km from the closest other point
-stoichData$tbl_SampleEvent = tibble(SiteId=c(11, 12, 13, 11, 14, 11, 14),
-                                    SampleDate=c("20220510", "20220525", "20220606", "20220608", "20220525", "20220609", as.character(NA))) |>
-  mutate(SampleYear = year(ymd(SampleDate))) |>
-  mutate(SampleMonth = month(ymd(SampleDate))) |>
-  mutate(SampleDay = day(ymd(SampleDate))) |>
-  mutate(SourceId = 1) |>
-  mutate(InputFileId = 1) |>
-  tibble::rowid_to_column("Id") |>
-  mutate(Id = Id + 1000) |>
-  mutate(SampleDate = ymd(SampleDate)) |>
-  mutate(Notes=as.character(NA))
-
-stoichData$tbl_OrganismStoichiometry = tibble(SampleEventId=c(1001,1002,1003,1004,1007)) |>
-  tibble::rowid_to_column("Id") |>
-  mutate(Id = Id + 200) |>
-  mutate(Notes=as.character(NA))
-
-stoichData$tbl_WaterChemistry = tibble(SampleEventId=c(1005, 1006)) |>
-  tibble::rowid_to_column("Id") |>
-  mutate(Id = Id + 300) |>
-  mutate(Notes=as.character(NA))
-
-# dataTables <- stoichData
-
-pairSummary <- function(dataTbl, timeDiff){
+pairedRows <- function(dataTbl){
   return(dataTbl |>
-           mutate(WaterEventId = str_extract(Notes.WaterChemistry, "(?<=SampleEventId = )[0-9]+"), .after="SampleDate.SampleEvent") |>
-           mutate(CheckDate = ymd(str_extract(Notes.WaterChemistry, "[0-9]{4}-[0-9]{2}-[0-9]{2}"))  - SampleDate.SampleEvent < timeDiff, .after="SampleDate.SampleEvent") |>
-           mutate(CheckLat = as.numeric(str_extract_all(Notes.WaterChemistry, "(?<=Latitude = )-?[0-9]+\\.[0-9]*")) - Latitude.Site, .after="SampleDate.SampleEvent") |>
-           mutate(CheckLong = as.numeric(str_extract_all(Notes.WaterChemistry, "(?<=Longitude = )-?[0-9]+\\.[0-9]*")) - Longitude.Site, .after="SampleDate.SampleEvent"))
+           mutate(paired = (!is.na(Id.WaterChemistry) | str_detect(Notes.WaterChemistry, "tbl_WaterChemistry::Id")) & !is.na(Id.OrganismStoichiometry)) |>
+           filter(paired==TRUE) |>
+           nrow())
 }
 
+# rawPairs <- pairedRows(joinSTOICH(stoichData))
+
+# check that nothing is paired with the original (NEON doesn't sample water and organisms on the same day)
+stoichPaired <- locateDataPairsSTOICH(stoichData, timeDiff=0, timeUnits="days", distance=0, pairMethod="Min Time", ignoreExisting=TRUE) %>%
+  joinSTOICH()
+
+expect_equal(pairedRows(joinSTOICH(stoichData)), 0)
+
+stoichPaired <- locateDataPairsSTOICH(stoichData, timeDiff=4, timeUnits="weeks", distance=10, pairMethod="Min Time", ignoreExisting=TRUE) %>%
+  joinSTOICH()
+
+# check rows are paired for <=1 week & <=5km
+expect_equal(pairedRows(stoichPaired), 637)
+
 stoichPaired <- locateDataPairsSTOICH(stoichData, timeDiff=2, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE) %>%
-  joinSTOICH() |>
-  pairSummary(weeks(2))
+  joinSTOICH()
 
-stoichPaired <- locateDataPairsSTOICH(stoichData, timeDiff=3, timeUnits="weeks", distance=15, pairMethod="Min Time", ignoreExisting=TRUE) %>%
-  joinSTOICH() |>
-  pairSummary(weeks(3))
+# check rows are paired for <=2 weeks & <=5km
+expect_equal(pairedRows(stoichPaired), 588)
 
-stoichPaired <- locateDataPairsSTOICH(stoichData, timeDiff=4, timeUnits="weeks", distance=15, pairMethod="Min Dist", ignoreExisting=TRUE) %>%
-  joinSTOICH() |>
-  pairSummary(weeks(4))
+stoichPaired <- locateDataPairsSTOICH(stoichData, timeDiff=1, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE) %>%
+  joinSTOICH()
 
-joinSTOICH(stoichData) %>% View()
+# check rows are paired for 1 week & <=5km
+expect_equal(pairedRows(stoichPaired), 412)
 
-# joinSTOICH(stoichData)
+stoichPairedAvg <- locateDataPairsSTOICH(stoichData, timeDiff=3, timeUnits="weeks", distance=5, pairMethod="Avg Water", ignoreExisting=TRUE) %>%
+  joinSTOICH()
+
+# View(stoichPairedAvg |>
+#        filter(!is.na(Id.OrganismStoichiometry) & Id.WaterChemistry==0) |>
+#        select(c(SampleDate.SampleEvent, Type.OrganismStoichiometry, Id.OrganismStoichiometry, contains("WaterChem"))))
+
+stoichPairedMin <- locateDataPairsSTOICH(stoichData, timeDiff=3, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE) %>%
+  joinSTOICH()
+
+# check rows are paired for 3 weeks & <=15km and it doesn't change when the pairing method changes
+expect_equal(pairedRows(stoichPairedAvg), pairedRows(stoichPairedMin))
+
+# joinSTOICH(stoichData) %>% View()
+

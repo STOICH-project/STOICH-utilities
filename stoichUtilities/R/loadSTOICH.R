@@ -38,16 +38,16 @@ loadSTOICH <- function(dataPath=file.path(path.expand("~"), "data")){
                             dataType = c("date")))
 
   tables <- (dataTables[["metadata"]] %>%
-               dplyr::select(table) %>%
+               dplyr::select("table") %>%
                dplyr::distinct() %>%
-               dplyr::mutate(table = stringr::str_extract(table, "(?<=tbl_)[a-zA-Z]+"))
+               dplyr::mutate(table = stringr::str_extract(.data$table, "(?<=tbl_)[a-zA-Z]+"))
              )[[1]]
   dataTables[["join_tables"]] <- dataTables[["metadata"]] %>%
-    dplyr::mutate(refTable = if_else(str_extract(variable, "[A-Za-z]+(?=Id)") %in% tables,
-                                     paste("tbl_", str_extract(variable, "[A-Za-z]+(?=Id)"), sep=""),
+    dplyr::mutate(refTable = if_else(str_extract(.data$variable, "[A-Za-z]+(?=Id)") %in% tables,
+                                     paste("tbl_", str_extract(.data$variable, "[A-Za-z]+(?=Id)"), sep=""),
                                      as.character(NA))) %>%
     dplyr::select(c("variable", "table", "refTable")) %>%
-    tidyr::drop_na(refTable)
+    tidyr::drop_na("refTable")
 
   for (i in tables){
     if (!file.exists(file.path(dataPath, paste("tbl_", i, ".csv", sep="")))){
@@ -57,7 +57,7 @@ loadSTOICH <- function(dataPath=file.path(path.expand("~"), "data")){
                   dplyr::filter(table == paste("tbl_", i, sep="")) |>
                   dplyr::select(c("variable", "dataType")) |>
                   # Since SampleDate doesn't exist yet remove it from the load variables
-                  dplyr::filter(variable != "SampleDate"))
+                  dplyr::filter(.data$variable != "SampleDate"))
 
     varTypeList <- setNames(as.list(varType$dataType), varType$variable)
     dataTables[[paste("tbl_", i, sep="")]] <- readr::read_csv(file.path(dataPath, paste("tbl_", i, ".csv", sep="")), col_types = varTypeList)

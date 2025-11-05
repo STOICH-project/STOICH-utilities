@@ -35,7 +35,7 @@ metadataSTOICH <- function(dataTables, metadata=NA){
     return(dataTables[["metadata"]]$variable)
   } else if (str_to_lower(metadata) == "joined"){
     return((dataTables[["metadata"]] |>
-              mutate(joined = paste(variable, str_remove_all(table, "tbl_"), sep=".")))$joined)
+              mutate(joined = paste(.data$variable, str_remove_all(.data$table, "tbl_"), sep=".")))$joined)
   } else if (str_to_lower(metadata) == "full"){
     return(dataTables[["metadata"]])
   } else {

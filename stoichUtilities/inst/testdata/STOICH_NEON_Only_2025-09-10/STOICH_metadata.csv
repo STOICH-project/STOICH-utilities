@@ -1,0 +1,129 @@
+variable,table,description,values,dataType,Units
+EntryName,tbl_InputFile,Name of the person entering data.,[Last_First],character,NA
+EntryDate,tbl_InputFile,"Year, month, and day  of the data entry.",NA,datetime,NA
+Name,tbl_Site,Descriptive name of location where sample was collected,NA,character,NA
+Country,tbl_Site,"Full name of country where sample was collected, no abbreviations.",NA,character,NA
+State,tbl_Site,"Full name of the state or province where the sample was collected. If there are multiple states (i.e. a lake is in Idaho and Utah), then separate with a comma (,).",NA,character,NA
+Latitude,tbl_Site,Latitude of site location where sample was collected.,NA,numeric,degrees
+Longitude,tbl_Site,Longitude of site location where sample was collected.,NA,numeric,degrees
+EcosystemType,tbl_Site,The type of ecosystem where the sample was collected.,"Lake, Reservoir, Stream, Wetland, River, Saline Lake, Pond, Coastal, NA",character,NA
+TrophicStatus,tbl_SampleEvent,Ecosystem trophic state,"Oligotrophic, Mesotrophic, Eutrophic, Dystrophic, NA",character,NA
+Elevation,tbl_Site,Meters above sea level.,NA,numeric,meters
+Notes,tbl_Site,Additional notes related to the sample location data.,NA,character,NA
+SampleYear,tbl_SampleEvent,Year the sample was collected (0 if the year is unkown/not reported).,NA,integer,NA
+SampleMonth,tbl_SampleEvent,Month the sample was collected (0 if the month is unknown/not reported).,NA,integer,NA
+SampleDay,tbl_SampleEvent,Day the sample was collected (0 if the day is unknown/not reported).,NA,integer,NA
+Habitat,tbl_SampleEvent,"Describes the aquatic habitat from which the sample was collected during the sample event, at the specific unique site ID.","Benthic, Littoral, Riparian, Pelagic, Pelagic - epilimnion, Pelagic - hypolimnion, Pelagic - metalimnion, NA",character,NA
+Depth,tbl_SampleEvent,Depth the sample was collected.,NA,numeric,meters
+AirTemp,tbl_SampleEvent,Air Temperature at time of collection in degrees Celsius.,NA,numeric,Celsius
+WaterTemp,tbl_SampleEvent,Temperature of water at time of collection at the most representative location in degrees Celsius.,NA,numeric,Celsius
+CloudCover,tbl_SampleEvent,Cloud cover as a percentage.,NA,integer,percent
+CanopyCover,tbl_SampleEvent,Canopy cover as a percentage.,NA,integer,percent
+Light,tbl_SampleEvent,Measurement of light levels at time of collection at the most representative location.,NA,numeric,NA
+LightUnits,tbl_SampleEvent,"Units in which light levels were measured in (list: micromole per second and square meter [umol_m2_s1], lumen [lm] or lumens per square meter[lm_m2])","umol_m2_s, lm, lm_m2, NA",character,NA
+Notes,tbl_SampleEvent,Additional notes related to the sample event data.,NA,character,NA
+Type,tbl_OrganismStoichiometry,Type of organism being sampled for stoichiometry data.,"Fish, Insecta, Mollusca, Annelida, Amphibian, Crustacean, Periphyton, Seston, Detritus (FPOM), Detritus (CPOM), Detritus (Other), Macrophyte, Bryophyte, Zooplankton, Invertebrates (Other), Microbial (Other), Other, NA",character,NA
+Origin,tbl_OrganismStoichiometry,"Original source location of the organism being measured. For example, indicate ""benthic"" if your sample was collected from the bottom of a lake.","Benthic, Sestonic, Epipsammic, Epiphyte, Epixylon, Epilithon, Epizootic, Epipelon, NA",character,NA
+TrophicMode,tbl_OrganismStoichiometry,Identify the trophic mode of your sample.,"photoautotroph, chemoautotroph, herbivore, omnivore, carnivore, detritivore, saprotroph, other",character,NA
+TaxonomicKingdom,tbl_OrganismStoichiometry,Organism's taxonomic kingdom.,"Archaebacteria, Eubacteria, Protista, Chromista, Fungi, Plantae, Animalia",character,NA
+TaxonomicOrder,tbl_OrganismStoichiometry,"Organism's taxonomic order. ""NA"" for unknown or for multiple known orders.",NA,character,NA
+TaxonomicFamily,tbl_OrganismStoichiometry,"Organism's taxonomic family. ""NA"" for unknown or for multiple known families.",NA,character,NA
+TaxonomicGenus,tbl_OrganismStoichiometry,"Taxonomic Genus of organism. ""NA""  for multiple genera, known or unknown.",NA,character,NA
+TaxonomicSpecies,tbl_OrganismStoichiometry,"Species epithet of organism. ""sp"" for single unknown species. Indicate ""spp"" for multiple species, known or unknown.",NA,character,NA
+SamplePooling,tbl_OrganismStoichiometry,How individual organism(s) were pooled for the sample.,"single_individual, multiple_individuals, subsample_composite, NA_unknown",character,NA
+StatisticalPooling,tbl_OrganismStoichiometry,"Whether a given observation is statistically pooled or not. Is this observation from one raw independent measure of a sample, or summarizing multiple observations.","Independent, Aggregate, NA_unknown",character,NA
+SampleSize,tbl_OrganismStoichiometry,Number of individual (statistical) samples contributing to measurement (e.g. a mean) for the sampling event.,NA,numeric,NA
+DevelopmentStage,tbl_OrganismStoichiometry,"Name of developmental stage, i.e. pupa, if applicable.",NA,character,NA
+GutClearance,tbl_OrganismStoichiometry,Did the sample organism(s) have their guts cleared or removed. i.e. caddisflies often have their guts removed before whole-body element analysis occurs.,"Clearance, Gut_Removed, NA",character,NA
+OrganismMass,tbl_OrganismStoichiometry,Measured value.,NA,numeric,NA
+OrganismMassType,tbl_OrganismStoichiometry,Type of organism mass measurement.,"Dry, Wet, AFDM, Carbon, NA",character,NA
+OrganismMassUnits,tbl_OrganismStoichiometry,Units used in organism mass measurement.,"kg, g, mg, ug, mg_L, ug_L, mg_cm2, ug_cm2, g_m2, mg_m2, NA",character,NA
+OrganismSizeNotes,tbl_OrganismStoichiometry,Additional notes related to organism mass.,NA,character,NA
+OrganismSampled,tbl_OrganismStoichiometry,Indicate whether the elemental measurements or stoichiometric values are representative of the entire organism (whole_organism) or only part of the organism (partial_organism).,"whole_organism, partial_organism, NA",character,NA
+TissueSampled,tbl_OrganismStoichiometry,"If the sample was ""partial_organism"", what part of the organism was sampled for these elemental measurements?",NA,character,NA
+CarbonMean,tbl_OrganismStoichiometry,The amount of carbon measured in the sample.,NA,numeric,NA
+CarbonStdev,tbl_OrganismStoichiometry,The standard deviation of carbon.,NA,numeric,NA
+CarbonUnits,tbl_OrganismStoichiometry,Units of measurement of carbon content.,"percent_dm, mg_g_dm, ug_g_dm, umol_L, mg_L, mg_cm2, ug_L, ug_cm2, NA",character,NA
+CarbonMethod,tbl_OrganismStoichiometry,Analysis method for measuring carbon content.,"CHN_analysis, LOI_C, NA",character,NA
+CarbonMethodUrl,tbl_OrganismStoichiometry,If the organismal carbon analysis method has an associated link to information about the method type or method protocol.,NA,character,NA
+NitrogenMean,tbl_OrganismStoichiometry,The amount of nitrogen measured in the sample.,NA,numeric,NA
+NitrogenStdev,tbl_OrganismStoichiometry,The standard deviation of nitrogen.,NA,numeric,NA
+NitrogenUnits,tbl_OrganismStoichiometry,Units of measurement of nitrogen content.,"percent_dm, mg_g_dm, ug_g_dm, umol_L, mg_L, mg_cm2, ug_L, ug_cm2, NA",character,NA
+NitrogenMethod,tbl_OrganismStoichiometry,Analysis method for measuring nitrogen content.,"CHN_analysis, Kjedahl, persulfate, NA",character,NA
+NitrogenMethodUrl,tbl_OrganismStoichiometry,If the organismal nitrogen analysis method has an associated link to information about the method type or method protocol.,NA,character,NA
+PhosphorusMean,tbl_OrganismStoichiometry,The amount of phosphorus measured in the sample.,NA,numeric,NA
+PhosphorusStdev,tbl_OrganismStoichiometry,The standard deviation of phosphorus.,NA,numeric,NA
+PhosphorusUnits,tbl_OrganismStoichiometry,Units of measurement of phosphorus content.,"percent_dm, mg_g_dm, ug_g_dm, umol_L, mg_L, mg_cm2, ug_L, ug_cm2, NA",character,NA
+PhosphorusMethod,tbl_OrganismStoichiometry,Analysis for measuring P content,"ICP_OMS, acid_digest, persulfate_digest, NA",character,NA
+PhosphorusMethodUrl,tbl_OrganismStoichiometry,If the organismal phosphorous analysis method has an associated link to information about the method type or method protocol.,NA,character,NA
+CarbonToNitrogenRatio,tbl_OrganismStoichiometry,carbon to nitrogen molar ratio,NA,numeric,NA
+CarbonToPhosphorusRatio,tbl_OrganismStoichiometry,carbon to phosphorus molar ratio,NA,numeric,NA
+NitrogenToPhosphorusRatio,tbl_OrganismStoichiometry,nitrogen to phosphorus molar ratio,NA,numeric,NA
+OtherElementsReported,tbl_OrganismStoichiometry,"Mark ""Y"" only if other element(s) (not C, N, or P) are reported for a whole-body organism in association with the dataset","Y, NA",logical,NA
+Isotope13C,tbl_OrganismStoichiometry,Carbon 13 isotope . Must be on Vienna Pee Dee Belemnite (VPDB) scale.,"permil, little delta is implied",numeric,NA
+Isotope13CStDev,tbl_OrganismStoichiometry,"Carbon 13 isotope standard deviation for organismal pooling, not for lab/analytical.",NA,numeric,NA
+Isotope15N,tbl_OrganismStoichiometry,Nitrogen 15. Must be on Atmosphere air scale.,"permil, little delta is implied",numeric,NA
+Isotope15NStDev,tbl_OrganismStoichiometry,"Nitrogen 15 isotope standard deviation for organismal pooling, not for lab/analytical.",NA,numeric,NA
+OtherIsotopesReported,tbl_OrganismStoichiometry,If the dataset includes stable isotope data for the given organism other than 13C or 15N.,"Y, NA",logical,NA
+Chlorophyll,tbl_OrganismStoichiometry,Measure of chlorophyll content of resource.,NA,numeric,NA
+ChlorophyllUnits,tbl_OrganismStoichiometry,Units of chlorophyll measure.,"ug_L, mg_L, ug_cm2, mg_cm2, ug_m2, ug_mg_dm, NA",character,NA
+ResourceQuantityReported,tbl_OrganismStoichiometry,"Mark ""Y"" if the dataset may include data on resource quantity (standing stocks or biomass) from the field site.","Y, NA",logical,NA
+OrganismSampleId,tbl_OrganismStoichiometry,Indicate the sample ID as used in the original dataset. This is a user-contributed column for tracking purposes. There is no database-wide organization for this identification. It is unique to each contributed dataset within the STOICH database.,NA,character,NA
+Notes,tbl_OrganismStoichiometry,Additional notes related to organismal (animal or resource) data.,NA,character,NA
+SpecConductivity,tbl_WaterChemistry,Water conductivity as specific conductivity.,NA,numeric,uS/cm
+pHValue,tbl_WaterChemistry,pH value.,NA,numeric,NA
+DO,tbl_WaterChemistry,Measurement of dissolved oxygen.,NA,numeric,NA
+DOUnits,tbl_WaterChemistry,Unit in which the measurement of dissolved oxygen was taken.,"percent, mg_L, ppm, other",character,NA
+DOC,tbl_WaterChemistry,Dissolved Organic Carbon concentration.,NA,numeric,NA
+DOCUnits,tbl_WaterChemistry,Units of Dissolved Organic Carbon measurement.,"umol_L, mg_L (C), ug_L (C),  ppm (C), NA",character,NA
+NH4,tbl_WaterChemistry,Concentration of elemental N in ammonium.,NA,numeric,NA
+NH4Units,tbl_WaterChemistry,Units of NH4 measurement.,"umol_L, mg_L (N), ug_L (N), mg_L (NH4), ug_L (NH4), mEq_L, ppm (N), ppm (NH4), NA",character,NA
+SRP,tbl_WaterChemistry,Concentration of elemental P as Soluble Reactive Phosphorus.,NA,numeric,NA
+SRPUnits,tbl_WaterChemistry,Units of SRP measurement.,"umol_L, mg_L (P), ug_L (P), mg_L (PO4), ug_L (PO4), mEq_L, ppm (P), ppm (PO4), NA",character,NA
+NO3,tbl_WaterChemistry,Concentration of elemental N in Nitrate.,NA,numeric,NA
+NO3Units,tbl_WaterChemistry,Units of NO3 measurement.,"umol_L, mg_L (N), ug_L (N), mg_L (NO3), ug_L (NO3), mEq_L, ppm (N), ppm (NO3), NA",character,NA
+TDN,tbl_WaterChemistry,Total Dissolved Nitrogen.,in units of elemental Nitrogen,numeric,NA
+TDNUnits,tbl_WaterChemistry,Units of Total Dissolved Nitrogen measurement.,"umol_L, mg_L (N), ug_L (N),  ppm (N), NA",character,NA
+TN,tbl_WaterChemistry,Total Nitrogen,in units of elemental Nitrogen,numeric,NA
+TNUnits,tbl_WaterChemistry,Units of total nitrogen.,"umol_L, mg_L (N), ug_L (N),  ppm (N), NA",character,NA
+TDP,tbl_WaterChemistry,Total Dissolved Phosphorus.,in units of elemental Phosphorus,numeric,NA
+TDPUnits,tbl_WaterChemistry,Units of Total Dissolved Phosphorus.,"umol_L, mg_L (P), ug_L (P),  ppm (P), NA",character,NA
+TP,tbl_WaterChemistry,Total Phosphorus.,in units of elemental Phosphorus,numeric,NA
+TPUnits,tbl_WaterChemistry,Units of Total Phosphorus.,"umol_L, mg_L (P), ug_L (P),  ppm (P), NA",character,NA
+StatisticalPooling,tbl_WaterChemistry,"Whether a given observation is statistically pooled or not. Is this observation from one raw independent measure of a sample, or summarizing multiple observations.","Independent, Aggregate, NA",logical,NA
+SampleSize,tbl_WaterChemistry,Number of individual (statistical) samples contributing to measurement (e.g. a mean) for the sampling event.,NA,integer,NA
+OtherElementsReported,tbl_WaterChemistry,"Are other element(s) (not C, N, or P) dissolved within the water are reported in association with dataset?","Y, NA",logical,NA
+WaterSampleId,tbl_WaterChemistry,Indicate the sample ID as used in the original dataset. This is a user-contributed column for tracking purposes. There is no database-wide organization for this identification. It is unique to each contributed dataset within the STOICH database.,NA,character,NA
+Notes,tbl_WaterChemistry,Additional notes related to water chemistry data,NA,character,NA
+Type,tbl_Source,The source type for this set of data.,"manualextraction_paper, raw_author, raw_repository, raw_unpublished, NA",character,NA
+DOI,tbl_Source,DOI if available; for published dataset or publication,NA,character,NA
+Url,tbl_Source,The link to the data if available; for publicly accessible data sources.,NA,character,NA
+Title,tbl_Source,The full title if available from the source of this data.,NA,character,NA
+FirstAuthor,tbl_Source,"The first author of the source of this data; for published sources. Use the format Last, First. Example: Doe, Jane",NA,character,NA
+YearPublished,tbl_Source,"The publication year, or the year that this data became publicly available.",NA,integer,NA
+Journal,tbl_Source,The journal where the source was published.,NA,character,NA
+Publisher,tbl_Source,NA,NA,character,NA
+License,tbl_Source,The license used if the data was previously published.,"CC BY-NC-SA 4.0, MIT,  CC BY-NC 4.0, CC BY-NC 3.0, CC BY-SA 4.0, CC0 1.0, CC BY 4.0, CC BY 3.0 US, CC BY, GPL 3.0+, GPL-3.0",character,NA
+LitSurveyId,tbl_Source,"If relevant, identify the lit survey unique ID.",NA,integer,NA
+Organization,tbl_Source,"Identify the organizations affiliated with the dataset. If there are multiple organizations, separate them with a comma (,).","federal, higher_education, NEON, NGO, state, tribe, other",character,NA
+LastName,tbl_Contact,"The last name of the person who has provided the dataset, or the corresponding author.",NA,character,NA
+FirstName,tbl_Contact,"The first name of the person who has provided the dataset, or the corresponding author.",NA,character,NA
+Email,tbl_Contact,"The email of the person who has provided the dataset, or the corresponding author.",NA,character,NA
+Notes,tbl_Source,Additional notes related to the data source.,NA,character,NA
+Id,tbl_InputFile,NA,NA,integer,NA
+FilePath,tbl_InputFile,NA,NA,character,NA
+ImportDate,tbl_InputFile,NA,NA,datetime,NA
+Id,tbl_Contact,NA,NA,integer,NA
+Id,tbl_Source,NA,NA,integer,NA
+ContactId,tbl_Source,Unique Identifier for each contact in the tbl_Contact table.,NA,integer,NA
+Citation,tbl_Source,NA,NA,character,NA
+Id,tbl_Site,NA,NA,integer,NA
+Id,tbl_SampleEvent,NA,NA,integer,NA
+SiteId,tbl_SampleEvent,Unique Identifier for each site in the tbl_Site table.,NA,integer,NA
+SourceId,tbl_SampleEvent,Unique Identifier for each source in the tbl_Source table.,NA,integer,NA
+InputFileId,tbl_OrganismStoichiometry,Unique Identifier for each entry in the tbl_InputFile table.,NA,integer,NA
+InputFileId,tbl_WaterChemistry,Unique Identifier for each entry in the tbl_InputFile table.,NA,integer,NA
+Id,tbl_OrganismStoichiometry,NA,NA,integer,NA
+SampleEventId,tbl_OrganismStoichiometry,Unique Identifier for each sample event in the tbl_SampleEvent table.,NA,integer,NA
+Id,tbl_WaterChemistry,NA,NA,integer,NA
+SampleEventId,tbl_WaterChemistry,Unique Identifier for each sample event in the tbl_SampleEvent table.,NA,integer,NA

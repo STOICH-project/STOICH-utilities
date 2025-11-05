@@ -25,21 +25,26 @@ locateDataPairsSTOICH(
 \item{pairMethod}{How to determine the best pair from multiple matches. Options are:
 Min Time - Prioritize the minimum time.
 Min Dist - Prioritize the minimum distance.
-#days=#km - Minimize in space and time using a relation for # days equal # kilometers (enter decimal numbers, i.e. "1.5days=2.1km").
-Avg Water - Takes the average for all the water chemistry data returned that matches an organism data entry.}
+#days=#km - Minimize in space and time using a relation for # days equal # kilometers
+(enter decimal numbers, i.e. "1.5days=2.1km").
+Avg Water - Takes the average for all the water chemistry data returned that matches an
+organism data entry.}
 
-\item{ignoreExisting}{Determines if the existing data pairs should be ignored and processed the same as other data.
-Probably only useful for averaging water data since the other data points already have matching time and distance data.}
+\item{ignoreExisting}{Determines if the existing data pairs should be ignored and processed
+the same as other data.  Probably only useful for averaging water data since the other
+data points already have matching time and distance data.}
 }
 \value{
-The STOICH data tables after pairs have been found. The water chemistry data will be copied to a new entry with a
-SampleEventId matching the organism stoichiometry data. The notes will be updated adding a comment about the original
-SampleEventId(s), such as "OriginalSampleEventId=(10, 11, 12)" for an average of 3 water chemistry samples to the Notes
-of tbl_WaterChemistry.
+The STOICH data tables after pairs have been found. The water chemistry data will be
+copied to a new entry with a SampleEventId matching the organism stoichiometry data. The
+notes will be updated adding a comment about the original SampleEventId(s), such as
+"OriginalSampleEventId=(10, 11, 12)" for an average of 3 water chemistry samples to the
+Notes of tbl_WaterChemistry.
 }
 \description{
-Looks for matches between organism stoichiometry and water chemistry data when the date & time or GPS locations are slightly off.
-This could be time intensive so if possible perform any filtering operations before locating data pairs.
+Looks for matches between organism stoichiometry and water chemistry data when the
+date & time or GPS locations are slightly off.  This could be time intensive so if
+possible perform any filtering operations before locating data pairs.
 }
 \examples{
 \dontrun{
@@ -47,7 +52,8 @@ This could be time intensive so if possible perform any filtering operations bef
 stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
 
 # filtering by table and pairing example with pipes:
-stoichFiltered <- filterSTOICH(dataTables=stoichData, var="Latitude", val=c(54.1, 103.1), condition="range") \%>\%
+stoichFiltered <- stoichData |>
+  filterSTOICH(var="Latitude", val=c(54.1, 103.1), condition="range") |>
   locateDataPairsSTOICH(timeDiff=2, timeUnits="weeks", distance=1, pairMethod="1.5days=2.1km")
 
 stoichTable <- joinSTOICH(stoichFiltered)

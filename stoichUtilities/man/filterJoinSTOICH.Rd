@@ -20,7 +20,8 @@ any corresponding entries from other tables.
 }
 \examples{
 \dontrun{
-# Not typically run independently. This function is called by filterSTOICH to clean up before returning data.
+# Not typically run independently. This function is called by filterSTOICH
+# to clean up before returning data.
 }
 
 }

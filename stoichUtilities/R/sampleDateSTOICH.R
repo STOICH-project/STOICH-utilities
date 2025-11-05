@@ -27,6 +27,7 @@ sampleDateSTOICH <- function(dataTables, mode="create", val=NA, condition=NA){
   if (mode == "create"){
     dataTables[["tbl_SampleEvent"]] <- createSampleDate(dataTables[["tbl_SampleEvent"]])
   } else if (mode == "filter"){
+    val <- as.integer(val)
     dataTables[["tbl_SampleEvent"]] <- dataTables[["tbl_SampleEvent"]] |>
       # Filter the table using the logical comparison vector from "date_compare" to select indexes for the slice function.
       slice((1:nrow(dataTables[["tbl_SampleEvent"]]))[date_compare(dataTables[["tbl_SampleEvent"]], val, condition)])
@@ -132,13 +133,13 @@ check_DateType <- function(tbl_SampleEvent){
 createSampleDate <- function(tbl_SampleEvent){
   if (check_DateType(tbl_SampleEvent)){
     return(tbl_SampleEvent |>
-      mutate(SampleDate = ymd(if_else(is.na(SampleDay) | is.na(SampleMonth) | is.na(SampleYear),
+      mutate(SampleDate = ymd(if_else(is.na(.data$SampleDay) | is.na(.data$SampleMonth) | is.na(.data$SampleYear),
                                       "00010101",
-                                      paste(as.character(SampleYear),
-                                            str_pad(as.character(SampleMonth), width=2, side="left", pad="0"),
-                                            str_pad(as.character(SampleDay), width=2, side="left", pad="0"),
+                                      paste(as.character(.data$SampleYear),
+                                            str_pad(as.character(.data$SampleMonth), width=2, side="left", pad="0"),
+                                            str_pad(as.character(.data$SampleDay), width=2, side="left", pad="0"),
                                             sep="")))) |>
-      mutate(SampleDate = if_else(SampleDate == ymd("00010101"), as.Date(NA), SampleDate)))
+      mutate(SampleDate = if_else(.data$SampleDate == ymd("00010101"), as.Date(NA), .data$SampleDate)))
   } else {
     stop("SampleYear, SampleMonth or SampleDay is expected as an integer or character please investigate and correct.")
   }
@@ -150,10 +151,20 @@ datesInRange <- function(iY, iM, iD, jY, jM, jD, tPeriod, tUnits){
   # convert to a lubridate period
   tPeriod <- period(tPeriod, tUnits)
 
+  printCleanDate <- function(Y, M, D){
+    return(ifelse(is.na(D) | is.na(M) | is.na(Y),
+                  NA,
+                  paste0(Y, "-", str_pad(M, width=2, side="left", pad="0"), "-", str_pad(D, width=2, side="left", pad="0"))))
+  }
+
+  # tibble(Year=jY, Month=jM, Day=jD) |>
+  #   mutate(strDate=ymd(printCleanDate(Year, Month, Day))) |>
+  #   View()
+
   return(ifelse(is.na(iD) | is.na(jD),
                 case_when(tPeriod < months(1) ~ FALSE, # lubridate treats 31 days as 1 month for comparisons
                           (is.na(iM) | is.na(jM)) & tPeriod < years(1)  ~ FALSE,
                           (is.na(iM) | is.na(jM)) ~ years(abs(iY - jY)) < tPeriod,
                           TRUE ~ months(abs(iM + 12*iY - (jM + 12*jY))) < tPeriod),
-                abs(ymd(paste0(iY, "-", iM, "-", iD)) - ymd(paste0(jY, "-", jM, "-", jD))) < tPeriod))
+                abs(ymd(printCleanDate(iY, iM, iD)) - ymd(printCleanDate(jY, jM, jD))) < tPeriod))
 }

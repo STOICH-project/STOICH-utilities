@@ -1,6 +1,6 @@
 Package: stoichUtilities
-Title: Provides user oriented tools to access STOICH Project data.
-Version: 0.9.5
+Title: Provides user oriented tools to access STOICH Project data
+Version: 1.0.0
 Authors@R: c(
       person("Chad", "Petersen", , "cpetersen4@unl.edu", role = c("aut", "cre")),
       person("U.S. National Science Foundation", role = "fnd")
@@ -13,16 +13,25 @@ BugReports: https://github.com/STOICH-project/STOICH-utilities/issues
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+Depends:
+    R (>= 4.1.0)
 Imports:
     tibble,
     tidyr,
     dplyr,
-    lubridate,
     readr,
     stringr,
-    sf
+    purrr,
+    magrittr,
+    lubridate,
+    sf,
+    rlang,
+    units,
+    stats,
+    jsonlite
 Suggests: 
+    tidyverse,
+    maps,
     knitr,
     rmarkdown,
     gt,
@@ -32,3 +41,4 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+RoxygenNote: 7.3.3

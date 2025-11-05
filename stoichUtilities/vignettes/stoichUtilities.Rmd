@@ -26,11 +26,6 @@ h4,h5,h6{
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(tibble)
-library(dplyr)
-library(tidyr)
-library(stringr)
-library(readr)
 library(gt)
 library(glue)
 library(gluedown)
@@ -50,16 +45,20 @@ library(kableExtra)
 # }
 
 library(tidyverse)
+# library(tibble)
+# library(dplyr)
+# library(tidyr)
+# library(purrr)
+# library(stringr)
+# library(readr)
 library(lubridate)
 library(sf)
 library(units)
+library(jsonlite)
 library(stoichUtilities)
 
-basePath <- path.expand("~")
-stoichData <- file.path(path.expand("~"), "data", "stoichdb", "currentDB")
-dbVersionList <- list.files(stoichData)
-dbCurrentVersion <- keep(dbVersionList, ~str_detect(.x, paste0(max(str_extract(dbVersionList, "[0-9]{4}-[0-9]{2}-[0-9]{2}"), na.rm=TRUE), "(?!.*\\.zip$)")))
-stoichData <- stoichUtilities::loadSTOICH(dataPath=file.path(stoichData, dbCurrentVersion))
+basePath <- system.file("testdata", "STOICH_NEON_Only_2025-09-10", package="stoichUtilities")
+stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
 stoichCols <- names(stoichData)
 stoichTbl <- tibble(index = 1:100)
 for (i in stoichCols){
@@ -87,8 +86,14 @@ The STOICH API "stoichUtilities" is an R library, as such you will need to have 
 
 ## Installation
 
-There are 2 options for installing the stoichUtilities package. Installing a prebuilt package contains the vignette, while a standard "Install and Restart" won't contain the vignette. Instructions for building your own package from source to get the vignette are also included.
-### Option 1: Install a PreBuilt Package
+There are 3 options for installing the stoichUtilities package. Installing a prebuilt package contains the vignette, while a standard "Install and Restart" won't contain the vignette. Instructions for building your own package from source to get the vignette are also included.
+
+### Option 1: Install Through CRAN
+```{r stoich-install, eval=FALSE}
+install.packages(“stoichUtilties”)
+```
+
+### Option 2: Install a PreBuilt Package
 Download the *stoichUtilities_x.x.x.xxxx.tar.gz* file.
 
 Select the menu option **Tools** -> **Install Packages**
@@ -96,7 +101,7 @@ Select the menu option **Tools** -> **Install Packages**
 A window should pop up. For **Install from:** choose **Package Archive File** and navigate to the location of the tar.gz file.
 
 Click "Install"
-### Option 2: Install from Source
+### Option 3: Install from Source
 #### Download Source Files
 There are 2 options to get the source files:
 * From the GitHub project page click the green Code button and choose "Download Zip"
@@ -115,7 +120,7 @@ Select the menu option **Build** -> **Build Source Package**
 
 To install the package, follow instructions for Installing a PreBuilt Package.
 
-### Installing Required Packages
+### Installing Required Packages (required for options 2 & 3)
 The stoichUtilities uses several other packages. Install the required packages.
 ```{r package-install, eval=FALSE}
 install.packages(“tidyverse”)
@@ -143,48 +148,64 @@ library(stoichUtilities)
 ### Working with STOICH Data
 ```{r using-utilities, eval=FALSE}
 # Load the STOICH data (assumed to be in a directory named "data" inside the home directory)
-stoichData <- stoichUtilities::loadSTOICH(dataPath=file.path(path.expand("~"), "data"))
+stoichData <- loadSTOICH(dataPath=file.path(path.expand("~"), "data"))
 
 # Filter the STOICH data
-stoichFiltered <- stoichUtilities::filterSTOICH(dataTables=stoichData, var="State", val="FL", condition="Equal")
+stoichFiltered <- filterSTOICH(dataTables=stoichData, 
+                               var="State", 
+                               val="North Dakota", 
+                               condition="Equal")
 
 # Match organism stoichiometry data with water chemsitry data for samples that weren't taken at the exact same time
-stoichPaired <- stoichUtilities::locateDataPairsSTOICH(stoichData, timeDiff=2, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE)
+stoichPaired <- locateDataPairsSTOICH(stoichData, 
+                                      timeDiff=2, 
+                                      timeUnits="weeks", 
+                                      distance=2, 
+                                      pairMethod="Min Time", 
+                                      ignoreExisting=TRUE)
 
 # Join all the tables into one large wide table
-stoichTable <- stoichUtilities::joinSTOICH(stoichPaired)
+stoichTable <- joinSTOICH(stoichPaired)
 
 ```
 
 ### Example of Mapping STOICH Data
-Use the stoichTable from the previous section as the data table for mapping.
-```{r mapping STOICH data, eval=FALSE}
-# Install the Leaflet package if it isn't installed.
-install.packages("leaflet")
+Use the tbl_Site table from stoichData for Site information for mapping.
+```{r mapping STOICH data, eval=TRUE}
+# Count how many sites are in each state.
+stateCounts <- stoichData$tbl_Site |>
+  select(c("State")) |> 
+  drop_na(State) |>
+  # Change the data to lowercase to allow the table to merge with the Tidyverse state data
+  mutate(State=str_to_lower(State)) |>
+  group_by(State) |>
+  # Summarise to get the number of sites for each state.
+  summarise(nSites=n(), .groups="keep")
 
-# Load the leaflet library.
-library(leaflet)
+# Use state data from Tidyverse and join the site data to it.
+us_states <- map_data("state") |>
+  left_join(stateCounts, by=c("region"="State"))
 
-# Split out the GPS data.
-gpsGroups <- stoichTable %>% 
-  select(c("Latitude", "Longitude")) %>% 
-  drop_na(Latitude, Longitude) %>% 
-  # Round the GPS coordinates so small differences in location are lumped together.
-  mutate(across(everything(), round, 2)) %>% 
-  group_by(Latitude, Longitude) %>% 
-  # Summarise to get the number of entries for each location in the database.
-  summarise(nSamples=n(), .groups="keep") %>%
-  # Convert the numbers to characters for use in popups
-  mutate(nSamples = paste("Samples: ", nSamples, sep=""), .keep="all")
+# Create a list of states in the Tidyverse dataset so only data from states with boundaries are used.
+stateList <- unique(us_states$region)
+
+# Split out the GPS data to map individual sites.
+gpsSites <- stoichData$tbl_Site |>
+  filter(str_to_lower(State) %in% stateList) |>
+  select(c("Latitude", "Longitude")) |>
+  drop_na(Latitude, Longitude) |>
+  # Round the gps coordinates so points that are close will be merged into a single point.
+  mutate(across(everything(), ~round(.x, 2))) |>
+  unique()
 
 # Start building the map.
-leaflet() %>% 
-  # Select the background style.
-  addProviderTiles(providers$OpenTopoMap) %>%
-  # Add markers for all the sites and group them based on zoom level.
-  addMarkers(data = gpsGroups, lng = ~Longitude, lat = ~Latitude, label=~nSamples, clusterOptions = markerClusterOptions())
+ggplot(data=us_states, mapping=aes(x=long, y=lat, group=group, fill=nSites)) +
+  geom_polygon(color="black") +
+  theme(legend.position = "bottom") +
+  geom_point(data=gpsSites, aes(x=Longitude, y=Latitude, group=NA), size=2, shape=23, fill="orange")
 
 ```
+
 ### Help Documentation
 You can also access documentation for any function using the help command.
 ```{r help-functions, eval=FALSE}
@@ -193,7 +214,7 @@ help(loadSTOICH)
 
 # Guide to the STOICH Data
 ## Data Structure
-![Data structure and relationship for STOICH data tables.](~/GitHub/STOICHDatabase/docs/data_model_narrow.svg){#id .class width=70% height=70%}
+![Data structure and relationship for STOICH data tables.](../vignettes/database_table_relationships_v20250717.png){#id .class width=90% height=90%}
 
 ## Table Structure View
 
