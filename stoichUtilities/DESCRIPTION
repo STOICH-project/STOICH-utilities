@@ -1,5 +1,5 @@
 Package: stoichUtilities
-Title: Provides user oriented tools to access STOICH Project data
+Title: User Tools for Using the STOICH Project Database
 Version: 1.0.0
 Authors@R: c(
       person("Chad", "Petersen", , "cpetersen4@unl.edu", role = c("aut", "cre")),

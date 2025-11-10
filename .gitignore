@@ -2,6 +2,9 @@
 .Rhistory
 .Rapp.history
 
+# R check files/folder
+/stoichUtilities.Rcheck/
+
 # Session Data files
 .RData
 
