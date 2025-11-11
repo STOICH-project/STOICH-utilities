@@ -25,7 +25,11 @@ stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
 ```R
 # After loading the data stoichData is now a list of tables. To see the names of those tables use names.
 names(stoichData)
+```
 
+
+
+```R
 # Print the first 5 rows of the Source table.
 stoichData[["tbl_Source"]] |> slice_head(n=5)
 ```
