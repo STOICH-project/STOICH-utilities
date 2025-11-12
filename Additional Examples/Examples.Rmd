@@ -2,8 +2,9 @@
 title: "STOICH-Utilities Examples"
 author: "Chad Petersen"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+# output: rmarkdown::html_vignette
 # output: github_document
+output: pdf_document
 vignette: >
   %\VignetteIndexEntry{STOICH-Utilities Examples}
   %\VignetteEngine{knitr::rmarkdown}
@@ -17,6 +18,8 @@ library(tidyverse)
 
 library(sf)
 library(leaflet)
+library(webshot) # for snapshots of leaflet plots
+library(mapview) # for snapshots of leaflet plots
 
 library(lubridate)
 library(maps)
@@ -27,11 +30,10 @@ library(gt)
 library(stoichUtilities)
 
 
-
-basePath <- system.file("testdata", "STOICH_NEON_Only_2025-09-10", package="stoichUtilities")
+basePath <- file.path(path.expand("~"), "data", "stoichdb", "currentDB", "STOICH_Beta_Release_2025-11-03")
 stoichData <- stoichUtilities::loadSTOICH(dataPath=basePath)
 
-OneDrive <- file.path(path.expand("~"), "..", "OneDrive - University of Nebraska-Lincoln", "STOICH", "Presentations", "Beta Users")
+# OneDrive <- file.path(path.expand("~"), "..", "OneDrive - University of Nebraska-Lincoln", "STOICH", "Presentations", "Beta Users")
 
 ```
 
@@ -184,10 +186,17 @@ myPlot <- myPlot |>
   leaflet::addAwesomeMarkers(data = data.frame(stoichTable |> filter(TaxonomicOrder == "hypnales")), lng = ~Longitude, lat = ~Latitude, icon=blueIcon) |>
   leaflet::addAwesomeMarkers(data = data.frame(stoichTable |> filter(TaxonomicOrder == "marchantiales")), lng = ~Longitude, lat = ~Latitude, icon=greenIcon) |>
   leaflet::addAwesomeMarkers(data = data.frame(stoichTable |> filter(TaxonomicOrder == "polygonales")), lng = ~Longitude, lat = ~Latitude, icon=orangeIcon)
-
+```
+```{r Mapping_Example_fake_display, eval=FALSE, echo=TRUE}
 # Display the plot.
 myPlot
 ```
+```{r Mapping_Example_display, eval=TRUE, echo=FALSE, out.width=3.5}
+# Not sure why this doesn't generate an actual image. This needs to be generated separately so the image can be included below.
+mapshot(myPlot, file = file.path(path.expand("~"), "temp_r_image.png"),
+        remove_controls = c("homeButton", "layersControl"))
+```
+![](C:/Users/cpetersen4/Documents/temp_r_image.png){out.width=3.5}
 
 ## Mapping Example 2
 ```{r Mapping_Example2_setup, eval=FALSE, echo=TRUE}
@@ -211,7 +220,9 @@ stoichTable <- stoichData |>
 
 # Load the state borders
 state_info <- map_data("state")
+```
 
+```{r Mapping_Example2_code, eval=FALSE, echo=TRUE}
 # Map the state borders
 seston_map <- ggplot(data = state_info, mapping = aes(x=long, y=lat, group=group)) +
   geom_polygon(color = "black", fill = "white") + 
@@ -232,6 +243,23 @@ num_years <- max(stoichTable$SampleYear.SampleEvent) - min(stoichTable$SampleYea
 
 # Create the animation.
 animate(map_with_animation, nframes = num_years)
+```
+```{r Mapping_Example2_plot, eval=TRUE, echo=FALSE}
+maxYear <- (stoichTable |>
+  group_by(SampleYear.SampleEvent) |>
+  summarise(N=n()) |>
+  filter(N==max(N)))$SampleYear.SampleEvent
+
+stoichTable <- filter(stoichTable, maxYear==SampleYear.SampleEvent)
+
+# Map the state borders
+ggplot(data = state_info, mapping = aes(x=long, y=lat, group=group)) +
+  geom_polygon(color = "black", fill = "white") + 
+  coord_quickmap() +
+  theme_void() +
+  # Add the Seston data to the map of state borders and set the color using the C:N ratio.
+  geom_point(data = stoichTable, aes(x = Longitude.Site, y = Latitude.Site, color=CarbonToNitrogenRatio.OrganismStoichiometry, group=SampleYear.SampleEvent)) + 
+  labs(color="C:N")
 ```
 
 ## Filtering Example
