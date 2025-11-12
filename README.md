@@ -43,6 +43,8 @@ install.packages(“units”)
 ```
 
 ## Using the R Library
+Additional examples are available at [Examples.pdf](https://pages.github.com/).
+
 ### Load the Required Libraries.
 ```R
 # Tidyverse and other support libraries
