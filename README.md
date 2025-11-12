@@ -43,7 +43,7 @@ install.packages(“units”)
 ```
 
 ## Using the R Library
-Additional examples are available at [Examples.pdf](https://pages.github.com/).
+Additional examples are available at [Examples.pdf]([https://pages.github.com/](https://github.com/STOICH-project/STOICH-utilities/blob/main/Additional%20Examples/Examples.pdf)).
 
 ### Load the Required Libraries.
 ```R
