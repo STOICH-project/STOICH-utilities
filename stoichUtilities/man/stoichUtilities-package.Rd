@@ -4,7 +4,7 @@
 \name{stoichUtilities-package}
 \alias{stoichUtilities}
 \alias{stoichUtilities-package}
-\title{stoichUtilities: Provides user oriented tools to access STOICH Project data}
+\title{stoichUtilities: User Tools for Accessing the STOICH Project Database}
 \description{
 The stoichUtilities R package provides user tools for working with STOICH database files. This package is designed to enable easier and more robust access to the data files from STOICH database releases.
 }
