@@ -6,7 +6,7 @@
 \alias{stoichUtilities-package}
 \title{stoichUtilities: User Tools for Accessing the STOICH Project Database}
 \description{
-The stoichUtilities R package provides user tools for working with STOICH database files. This package is designed to enable easier and more robust access to the data files from STOICH database releases.
+User tools for working with The STOICH Project (Stoichiometric Traits of Organisms in their Chemical Habitats) database \url{https://snr-stoich.unl.edu/}. This package is designed to aid in data discovery, filtering, pairing water samples with organism samples, and merging data tables to assist users in preparing data for analyses. For additional examples see "Additional Examples" and the readme file at \url{https://github.com/STOICH-project/STOICH-utilities}.
 }
 \seealso{
 Useful links:
