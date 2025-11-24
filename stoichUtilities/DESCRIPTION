@@ -10,8 +10,8 @@ Authors@R: c(
       person("U.S. National Science Foundation", role = "fnd")
     )
 Description: 
-    User tools for working with The STOICH Project (Stoichiometric Traits of 
-    Organisms in their Chemical Habitats) database <https://snr-stoich.unl.edu/>. 
+    User tools for working with The STOICH (Stoichiometric Traits of Organisms 
+    in their Chemical Habitats) Project database <https://snr-stoich.unl.edu/>. 
     This package is designed to aid in data discovery, filtering, pairing water 
     samples with organism samples, and merging data tables to assist users in 
     preparing data for analyses. For additional examples see "Additional Examples"

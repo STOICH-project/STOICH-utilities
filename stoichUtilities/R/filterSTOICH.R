@@ -79,7 +79,8 @@ filterSTOICH <- function(dataTables, var, val, condition){
   } else if (count(varMetadata)[[1]] > 1){
     # If there are multiple entries for the selected variable, filter based on table.
     if (!is.character(tableVar) | is.na(tableVar)){
-      stop(paste("Please used the joined variable name to specify the table.",
+      varOptions <- paste(var, str_remove_all(varMetadata$table, "tbl_"), sep=".")
+      stop(paste("Please use the joined variable name to specify the table.",
                  "Joined variable names for variable: \"", var, "\" are:\n",
                  str_c(varOptions, collapse=",  "),
                  "\n\nPlease rerun filterSTOICH with one of the joined variable names listed above.", sep=""))
