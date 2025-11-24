@@ -19,7 +19,7 @@ Checks if the STOICH data tables loaded from release files are in the proper for
 \examples{
 \dontrun{
 # Load the data
-stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
+stoichData <- loadSTOICH(dataPath="C:/Users/example_user/STOICH_data_location")
 
 verifySTOICH(stoichData)
 

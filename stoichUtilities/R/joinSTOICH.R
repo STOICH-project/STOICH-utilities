@@ -12,7 +12,7 @@
 #' @examples
 #' \dontrun{
 #' # Load the data
-#' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
+#' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/STOICH_data_location")
 #'
 #' # filtering by table such as:
 #' stoichFiltered <- filterSTOICH(dataTables=stoichData,

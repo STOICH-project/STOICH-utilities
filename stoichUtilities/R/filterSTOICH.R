@@ -21,7 +21,7 @@
 #' @examples
 #' \dontrun{
 #' # Load the data
-#' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
+#' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/STOICH_data_location")
 #'
 #' # filtering by table such as:
 #' stoichFiltered <- filterSTOICH(dataTables=stoichData,
@@ -79,25 +79,10 @@ filterSTOICH <- function(dataTables, var, val, condition){
   } else if (count(varMetadata)[[1]] > 1){
     # If there are multiple entries for the selected variable, filter based on table.
     if (!is.character(tableVar) | is.na(tableVar)){
-      varOptions <- paste(var, str_remove_all(varMetadata$table, "tbl_"), sep=".")
-      print("\"var\" is not unique did you mean to select one of the following?\noption  var\n")
-      for (i in 1:length(varOptions)){
-        print(paste(str_pad(i, 6, side="left", pad=" "), "  ", varOptions[i], "\n", sep=""))
-      }
-      print("     N  None of the above or stop.\n")
-      print(paste("Please select one of the following:", str_c(c(1:length(varOptions), "N"), collapse=",  ")))
-      useSelection <- ""
-      while (!(tolower(useSelection) %in% c(1:length(varOptions), "N", "n", ""))){
-        useSelection <- readline(prompt=paste("Please select one of the following:", str_c(c(1:length(varOptions), "N"), collapse=",  ")))
-      }
-      if (useSelection %in% c(1:length(varOptions))){
-
-      } else {
-        stop(paste("Please used the joined variable name to specify the table.",
-                   "Joined variable names for variable: \"", var, "\" are:\n",
-                   str_c(varOptions, collapse=",  "),
-                   "\n\nPlease rerun filterSTOICH with one of the joined variable names listed above.", sep=""))
-      }
+      stop(paste("Please used the joined variable name to specify the table.",
+                 "Joined variable names for variable: \"", var, "\" are:\n",
+                 str_c(varOptions, collapse=",  "),
+                 "\n\nPlease rerun filterSTOICH with one of the joined variable names listed above.", sep=""))
     } else {
       varMetadata <- varMetadata %>%
         dplyr::filter(table == paste("tbl_", tableVar, sep=""))

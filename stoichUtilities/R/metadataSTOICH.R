@@ -16,7 +16,7 @@
 #' @examples
 #' \dontrun{
 #' # Load the data
-#' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
+#' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/STOICH_data_location")
 #'
 #' # list the variable names
 #' metadataSTOICH(stoichData, "variables")
@@ -29,8 +29,7 @@ metadataSTOICH <- function(dataTables, metadata=NA){
   verifySTOICH(dataTables)
 
   if (is.na(metadata) | !is.character(metadata)){
-    print("Options for metadata are: \"variables\", \"joined\", \"full\". You can get a list of variable names using metadataSTOICH(dataTables, \"variables\") and supplying loaded STOICH data as \"dataTables\".")
-    return("")
+    stop("Options for metadata are: \"variables\", \"joined\", \"full\". You can get a list of variable names using metadataSTOICH(dataTables, \"variables\") and supplying loaded STOICH data as \"dataTables\".")
   } else if (str_to_lower(metadata) == "variables"){
     return(dataTables[["metadata"]]$variable)
   } else if (str_to_lower(metadata) == "joined"){
@@ -39,7 +38,7 @@ metadataSTOICH <- function(dataTables, metadata=NA){
   } else if (str_to_lower(metadata) == "full"){
     return(dataTables[["metadata"]])
   } else {
-    print("Options for metadata are: \"variables\", \"joined\", \"full\". You can get a list of variable names using metadataSTOICH(dataTables, \"variables\") and supplying loaded STOICH data as \"dataTables\".")
-    return("")
+    stop("Options for metadata are: \"variables\", \"joined\", \"full\". You can get a list of variable names using metadataSTOICH(dataTables, \"variables\") and supplying loaded STOICH data as \"dataTables\".")
   }
+  return("")
 }

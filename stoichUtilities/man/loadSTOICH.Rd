@@ -17,7 +17,7 @@ Loads STOICH data from release files.
 }
 \examples{
 \dontrun{
-stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
+stoichData <- loadSTOICH(dataPath="C:/Users/example_user/STOICH_data_location")
 }
 
 }

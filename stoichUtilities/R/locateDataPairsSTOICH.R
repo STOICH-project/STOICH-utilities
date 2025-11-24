@@ -133,7 +133,7 @@ condense <- function(var, x, u){
 #' @examples
 #' \dontrun{
 #' # Load the data
-#' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
+#' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/STOICH_data_location")
 #'
 #' # filtering by table and pairing example with pipes:
 #' stoichFiltered <- stoichData |>

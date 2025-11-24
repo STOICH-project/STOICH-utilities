@@ -15,7 +15,7 @@
 #' @examples
 #' \dontrun{
 #' # Load the data
-#' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
+#' stoichData <- loadSTOICH(dataPath="C:/Users/example_user/STOICH_data_location")
 #'
 #' stoichTable <- sampleDateSTOICH(stoichDate, mode="create")
 #' stoichTable <- sampleDateSTOICH(stoichTable, mode="filter", val="", condition="")

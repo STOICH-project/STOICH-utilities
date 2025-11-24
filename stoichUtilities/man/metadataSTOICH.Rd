@@ -23,7 +23,7 @@ Used to help explore the STOICH data.
 \examples{
 \dontrun{
 # Load the data
-stoichData <- loadSTOICH(dataPath="C:/Users/example_user/Documents/data")
+stoichData <- loadSTOICH(dataPath="C:/Users/example_user/STOICH_data_location")
 
 # list the variable names
 metadataSTOICH(stoichData, "variables")
