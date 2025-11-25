@@ -3,10 +3,16 @@
 The STOICH-utilities R package provides user tools for working with STOICH database files. This package is designed to enable easier and more robust access to the data files from STOICH database releases.
 
 ## Getting Started
-The STOICH API "stoichUtilities" is an R library, as such you will need to have R installed. It is recommended to install RStudio (https://www.rstudio.com/) to help manage packages and provide an integrated development environment (IDE).
+The STOICH database R package "stoichUtilities" is a set of functions to aid with tasks like filtering, pairing water samples with organism samples and merging tables. Since it is an R package you will need to have R installed. It is recommended to install RStudio (https://www.rstudio.com/) to help manage packages and provide an integrated development environment (IDE).
 ## Installation
-There are 2 options for installing the stoichUtilities package. Installing a prebuilt package contains the vignette, while a standard "Install and Restart" won't contain the vignette. Instructions for building your own package from source to get the vignette are also included.
-### Option 1: Install a PreBuilt Package
+There are 3 options for installing the stoichUtilities package. Installing a prebuilt package contains the vignette, while a standard "Install and Restart" won't contain the vignette. Instructions for building your own package from source to get the vignette are also included.
+### Option 1: Install via CRAN
+The "stoichUtilities" has been submitted to CRAN and should be available soon to install via the R package manager.
+```R
+install.packages("stoichUtilities")
+```
+
+### Option 2: Install a PreBuilt Package
 Download the *stoichUtilities_x.x.x.xxxx.tar.gz* file.
 
 Select the menu option **Tools** -> **Install Packages**
@@ -14,7 +20,7 @@ Select the menu option **Tools** -> **Install Packages**
 A window should pop up. For **Install from:** choose **Package Archive File** and navigate to the location of the tar.gz file.
 
 Click "Install"
-### Option 2: Install from Source
+### Option 3: Install from Source
 #### Download Source Files
 There are 2 options to get the source files:
 * From the GitHub project page click the green Code button and choose "Download Zip"
