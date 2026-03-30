@@ -36,7 +36,7 @@ Example: Muscle plugs from a fish do not qualify for the database, as a muscle p
 
 **The organic sample must have at least two of the following measurements: Carbon, Nitrogen, Phosphorous**
 
-- Isotopes of these elements are acceptable: C<sup>12</sup>, C13, N14, N15
+- Isotopes of these elements are acceptable: C<sup>12</sup>, C<sup>13</sup>, N<sup>14</sup>, N<sup>15</sup>
 
 **The stoichiometry data must be collected in the field**
 
