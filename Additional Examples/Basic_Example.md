@@ -2,60 +2,60 @@
 
 ### ***Load the Required Libraries.**
 
-```
-***`\# Tidyverse and other support libraries`**
+```R
+\# Tidyverse and other support libraries
 
-***`library(tidyverse)`**
+library(tidyverse)
 
-***`library(lubridate)`**
+library(lubridate)
 
-***`library(sf)`**
+library(sf)
 
-***`library(units)`**
+library(units)
 
 
-***`\# Load stoichUtilities`**
+\# Load stoichUtilities
 
-***`library(stoichUtilities)`**
+library(stoichUtilities)
 ```
 
 ### ***Loading the STOICH DB and Testing the STOICH-Utilities**
 
 ***This is where you need to the path to the folder containing the data.**
 
-```
-***`\# Three options for creating a variable to store the path to the STOICH data.`**
+```R
+\# Three options for creating a variable to store the path to the STOICH data.
 
-***`\# Building the path starting at your Documents directory.`**
+\# Building the path starting at your Documents directory.
 
-***`basePath \<- file.path(path.expand("~"), "data", "STOICH\_Beta\_Release\_2023-07-21")`**
+basePath \<- file.path(path.expand("~"), "data", "STOICH\_Beta\_Release\_2023-07-21")
 
-***`\# Or with a text string.`**
+\# Or with a text string.
 
-***`basePath \<- "C:/Users/peter/Documents/data/STOICH\_Beta\_Release\_2023-07-21"`**
+basePath \<- "C:/Users/peter/Documents/data/STOICH\_Beta\_Release\_2023-07-21"
 
-***`\# Or if you set the working directory to point to the data.`**
+\# Or if you set the working directory to point to the data.
 
-***`basePath \<- getwd()`**
-
-
-***`\# Load the STOICH data (using a predefined path variable)`**
-
-***`stoichData \<- stoichUtilities::loadSTOICH(dataPath=basePath)`**
+basePath \<- getwd()
 
 
-***`\# Filter the STOICH data`**
+\# Load the STOICH data (using a predefined path variable)
 
-***`stoichFiltered \<- stoichUtilities::filterSTOICH(dataTables=stoichData, var="State", val="Florida", condition="Equal")`**
-
-
-***`\# Match organism stoichiometry data with water chemsitry data for samples that weren't taken at the exact same time`**
-
-***`stoichPaired \<- stoichUtilities::locateDataPairsSTOICH(stoichFiltered, timeDiff=2, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE)`**
+stoichData \<- stoichUtilities::loadSTOICH(dataPath=basePath)
 
 
-***`\# Join all the tables into one large wide table`**
+\# Filter the STOICH data
 
-***`stoichTable \<- stoichUtilities::joinSTOICH(stoichPaired)`**
+stoichFiltered \<- stoichUtilities::filterSTOICH(dataTables=stoichData, var="State", val="Florida", condition="Equal")
+
+
+\# Match organism stoichiometry data with water chemsitry data for samples that weren't taken at the exact same time
+
+stoichPaired \<- stoichUtilities::locateDataPairsSTOICH(stoichFiltered, timeDiff=2, timeUnits="weeks", distance=5, pairMethod="Min Time", ignoreExisting=TRUE)
+
+
+\# Join all the tables into one large wide table
+
+stoichTable \<- stoichUtilities::joinSTOICH(stoichPaired)
 ```
 
