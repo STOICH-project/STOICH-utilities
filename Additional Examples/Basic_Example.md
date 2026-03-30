@@ -28,11 +28,11 @@ library(stoichUtilities)
 
 # Building the path starting at your Documents directory.
 
-basePath <- file.path(path.expand("~"), "data", "STOICH\_Beta\_Release\_2025-12-11")
+basePath <- file.path(path.expand("~"), "data", "STOICH_Beta_Release_2025-12-11")
 
 # Or with a text string.
 
-basePath <- "C:/Users/peter/Documents/data/STOICH\_Beta\_Release\_2025-12-11"
+basePath <- "C:/Users/peter/Documents/data/STOICH_Beta_Release_2025-12-11"
 
 # Or if you set the working directory to point to the data.
 
