@@ -140,7 +140,7 @@ If the site location information is not lat/long in decimal degrees (DD.DDDDD), 
 
 9. **My data is transformed data, now what?**
 
-**Corrected data **
+**Corrected data**
 
 If your data has been transformed in order to standardize or correct the data to a more accurate value (i.e. due to drifting analytical equipment), please use this data, and not the raw data. Add a note in the associated note column. 
 
