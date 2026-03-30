@@ -1,4 +1,30 @@
-***Download the data from https://snr-stoich.unl.edu/Data/STOICH_Release_2025-12-11.zip, extract it on your computer and make a note of the path. You will have to provide the path to the data when calling the loadSTOICH function.**
+# **Decide how to work with the STOICH DB**
+
+There are 2 options for working with the STOICH data. You can download the fully joined csv file or use the database tables with the R package stoichUtilities.
+
+## **Fully joined csv.**
+Download the fully joined csv file at https://doi.org/10.6073/pasta/d63489af723aec3b4a608c54ba7d636d.
+
+If you are using R you can load it with one of the following:
+```R
+# with the tidyverse
+library(tidyverse)
+stoichData <- read_csv(file.path(path.expand("~/../Downloads"), "STOICH_Release_Full_Join_20251211.csv"), guess_max = Inf)
+
+# or with base R:
+stoichData <- read.csv(file.path(path.expand("~/../Downloads"), "STOICH_Release_Full_Join_20251211.csv"), guess_max = Inf)
+```
+
+## **Using the database tables and stoichUtilities**
+
+Download the data from https://snr-stoich.unl.edu/Data/STOICH_Release_2025-12-11.zip, extract it on your computer and make a note of the path. You will have to provide the path to the data when calling the loadSTOICH function.
+
+### **Load the Required Libraries.**
+
+```R
+# Install stoichUtilities
+install.packages("stoichUtilities")
+```
 
 ### **Load the Required Libraries.**
 
