@@ -1,6 +1,6 @@
 **Data Entry Guide - How to enter your data into the Data Template**
 
-1. **Transfer relevant data from your datasheet to the STOICH data template **
+1. **Transfer relevant data from your datasheet to the STOICH data template.**
 
    a. Begin by entering required data. If not all required data is available, see FAQs for more details on what to do with an incomplete dataset. 
 
